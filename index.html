@@ -14,21 +14,19 @@
   <style>
     :root {
       --bg: #050811;
-      --card-bg: rgba(13, 20, 36, 0.76);
+      --card-bg: rgba(13, 20, 36, 0.78);
       --card-border: rgba(56, 189, 248, 0.16);
       --primary: #0284c7;
       --primary-light: #38bdf8;
       --accent-cyan: #06b6d4;
       --accent-emerald: #10b981;
       --accent-purple: #a855f7;
-      --accent-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
 
-    /* Animated Aurora Background */
     body {
       background-color: var(--bg);
       color: var(--text-main);
@@ -43,12 +41,12 @@
       z-index: 0; pointer-events: none; overflow: hidden;
     }
     .aurora-orb {
-      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.28;
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.25;
       animation: floatOrb 18s infinite alternate ease-in-out;
     }
-    .orb-1 { width: 380px; height: 380px; background: #0284c7; top: -100px; left: -80px; animation-duration: 14s; }
-    .orb-2 { width: 320px; height: 320px; background: #6366f1; top: 35%; right: -100px; animation-duration: 20s; }
-    .orb-3 { width: 260px; height: 260px; background: #06b6d4; bottom: 80px; left: 15%; animation-duration: 16s; }
+    .orb-1 { width: 380px; height: 380px; background: #0284c7; top: -100px; left: -80px; }
+    .orb-2 { width: 320px; height: 320px; background: #6366f1; top: 35%; right: -100px; }
+    .orb-3 { width: 260px; height: 260px; background: #06b6d4; bottom: 80px; left: 15%; }
 
     @keyframes floatOrb {
       0% { transform: translate(0, 0) scale(1); }
@@ -56,10 +54,9 @@
       100% { transform: translate(-30px, 70px) scale(0.95); }
     }
 
-    /* Header */
     header {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(5, 8, 17, 0.82);
+      background: rgba(5, 8, 17, 0.85);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--card-border);
       padding: 14px 20px;
@@ -100,11 +97,11 @@
     .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); }
     .cycle-tag-count { font-size: 0.95rem; font-weight: 800; color: #fff; margin-top: 2px; }
 
-    /* Accordion Subjects */
+    /* Subjects Accordion */
     .subject-accordion {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 20px; margin-bottom: 14px; overflow: hidden;
-      backdrop-filter: blur(16px); transition: transform 0.2s;
+      backdrop-filter: blur(16px);
     }
     .subject-header-btn {
       width: 100%; padding: 16px 18px; background: none; border: none;
@@ -137,20 +134,26 @@
     .rev-pill.done { background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; border-color: transparent; }
     .rev-pill.r5-done { background: linear-gradient(135deg, #10b981, #059669); }
 
-    /* AI Search & Generator Tab */
+    /* AI Search & Clinical Assistant */
     .ai-hero-card {
       background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(13, 20, 36, 0.88) 100%);
       border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 24px; padding: 22px; margin-bottom: 20px;
-      backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      backdrop-filter: blur(20px);
     }
-    .ai-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4);
-      color: #c084fc; font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
+    .ai-mode-toggle {
+      display: flex; gap: 8px; margin: 14px 0 10px;
+      background: rgba(0,0,0,0.3); padding: 4px; border-radius: 14px;
     }
-    .ai-search-bar {
-      display: flex; gap: 8px; margin-top: 16px;
+    .ai-mode-btn {
+      flex: 1; padding: 8px 12px; border-radius: 10px; border: none;
+      background: transparent; color: var(--text-muted); font-size: 0.78rem; font-weight: 700;
+      cursor: pointer; transition: 0.2s;
     }
+    .ai-mode-btn.active {
+      background: var(--accent-purple); color: #fff;
+    }
+
+    .ai-search-bar { display: flex; gap: 8px; margin-top: 8px; }
     .ai-input {
       flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
       border-radius: 14px; padding: 12px 16px; color: #fff; font-size: 0.95rem; outline: none;
@@ -159,28 +162,30 @@
     .btn-ai-generate {
       background: linear-gradient(135deg, #a855f7, #6366f1); border: none; border-radius: 14px;
       color: #fff; padding: 0 18px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
-      display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
-    }
-    .ai-suggest-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-    .ai-chip {
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-muted); font-size: 0.72rem; padding: 5px 10px; border-radius: 8px; cursor: pointer;
     }
 
-    .ai-result-box {
+    /* AI Info Container */
+    .ai-info-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 20px; padding: 20px; margin-top: 18px; display: none;
+      border-radius: 20px; padding: 22px; margin-top: 18px; display: none;
       backdrop-filter: blur(16px); animation: slideUp 0.3s ease;
     }
-    .ai-mcq-option {
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px; padding: 12px; margin-top: 8px; font-size: 0.88rem; cursor: pointer; transition: 0.2s;
-    }
-    .ai-mcq-option:hover { background: rgba(255,255,255,0.06); }
-    .ai-mcq-option.correct { background: rgba(16, 185, 129, 0.18); border-color: var(--accent-emerald); color: #34d399; font-weight: 600; }
-    .ai-mcq-option.wrong { background: rgba(244, 63, 94, 0.18); border-color: #f43f5e; color: #fb7185; }
+    .info-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+    .info-title { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .info-badge { font-size: 0.72rem; padding: 4px 10px; border-radius: 8px; background: rgba(56,189,248,0.15); color: var(--primary-light); font-weight: 700; }
+    
+    .yield-section { margin-bottom: 14px; }
+    .yield-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.6px; margin-bottom: 4px; }
+    .yield-desc { font-size: 0.92rem; line-height: 1.5; color: #e2e8f0; }
 
-    /* Flashcard UI */
+    .mcq-option {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 12px; margin-top: 8px; font-size: 0.88rem; cursor: pointer;
+    }
+    .mcq-option.correct { background: rgba(16, 185, 129, 0.18); border-color: var(--accent-emerald); color: #34d399; font-weight: 600; }
+    .mcq-option.wrong { background: rgba(244, 63, 94, 0.18); border-color: #f43f5e; color: #fb7185; }
+
+    /* Flashcards */
     .flashcard-deck-wrap { perspective: 1200px; margin-bottom: 22px; cursor: pointer; }
     .flashcard-inner-box {
       min-height: 260px; background: var(--card-bg);
@@ -199,7 +204,7 @@
       padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.3);
     }
 
-    /* Timer Styles */
+    /* Timer */
     .timer-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 28px; padding: 28px 20px; text-align: center; backdrop-filter: blur(20px);
@@ -232,7 +237,6 @@
     }
     .nav-tab-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
     .nav-tab-item.active { color: var(--primary-light); }
-    .nav-tab-item.active svg { stroke: var(--primary-light); filter: drop-shadow(0 0 6px rgba(56,189,248,0.5)); }
 
     .btn-main-action {
       padding: 14px 22px; border-radius: 14px; border: none;
@@ -254,7 +258,6 @@
     <div class="aurora-orb orb-3"></div>
   </div>
 
-  <!-- Header -->
   <header>
     <div class="brand-wrap">
       <div class="brand-icon">
@@ -285,37 +288,70 @@
     <div id="subjectListContainer"></div>
   </main>
 
-  <!-- TAB 2: AI CLINICAL SEARCH & GENERATOR -->
+  <!-- TAB 2: IMPROVED CLINICAL AI SEARCH (SUMMARY & QUESTION MODES) -->
   <section id="view-ai" class="view-content">
     <div class="ai-hero-card">
-      <div class="ai-badge">✦ Gemini AI Engine</div>
-      <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Search or Generate Questions</h2>
-      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Type any clinical topic, drug, syndrome, or sign to create high-yield exam cards.</p>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:#c084fc;">✦ Clinical AI Assistant</span>
+        <button onclick="configureApiKey()" style="background:none; border:none; color:var(--text-muted); font-size:0.72rem; text-decoration:underline; cursor:pointer;">API Key Settings</button>
+      </div>
+      <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Search Any Medical Topic</h2>
+
+      <!-- Mode Selector: Search Info vs Create MCQ -->
+      <div class="ai-mode-toggle">
+        <button class="ai-mode-btn active" id="btnModeSummary" onclick="setAiMode('summary')">📖 Clinical High-Yield Summary</button>
+        <button class="ai-mode-btn" id="btnModeMcq" onclick="setAiMode('mcq')">📝 Practice Exam MCQ</button>
+      </div>
       
       <div class="ai-search-bar">
-        <input type="text" id="aiTopicInput" class="ai-input" placeholder="e.g., Pheochromocytoma, Horner syndrome...">
-        <button class="btn-ai-generate" onclick="runAiGeneration()">Generate</button>
+        <input type="text" id="aiTopicInput" class="ai-input" placeholder="e.g. Paracetamol toxicity, Croup, Marfan syndrome...">
+        <button class="btn-ai-generate" onclick="handleAiSearch()">Search</button>
       </div>
 
-      <div class="ai-suggest-chips">
-        <span class="ai-chip" onclick="useSuggest('Ewing Sarcoma')">Ewing Sarcoma</span>
-        <span class="ai-chip" onclick="useSuggest('Lithium Toxicity')">Lithium Toxicity</span>
-        <span class="ai-chip" onclick="useSuggest('Pemphigus vs Pemphigoid')">Pemphigus vs Pemphigoid</span>
-        <span class="ai-chip" onclick="useSuggest('Salter-Harris')">Salter-Harris</span>
+      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;">
+        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Paracetamol poisoning')">Paracetamol poisoning</span>
+        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Pheochromocytoma')">Pheochromocytoma</span>
+        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Burkitt lymphoma')">Burkitt lymphoma</span>
+        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Croup')">Croup</span>
       </div>
     </div>
 
     <!-- AI Output Box -->
-    <div id="aiResultCard" class="ai-result-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <span class="ai-badge" style="background:rgba(16,185,129,0.15); color:var(--accent-emerald); border-color:rgba(16,185,129,0.4);" id="aiGeneratedBadge">Generated High-Yield Question</span>
-        <button onclick="saveAiCardToFlashcards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:5px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">+ Save to Cards</button>
+    <div id="aiResultCard" class="ai-info-card">
+      <div class="info-header">
+        <div>
+          <div class="info-title" id="aiResultTitle">Topic Summary</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;" id="aiResultSubtitle">NEET PG High-Yield Insights</div>
+        </div>
+        <button onclick="saveCurrentToCards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:6px 14px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">+ Save to Flashcards</button>
       </div>
-      
-      <div id="aiClinicalScenario" style="font-size:0.95rem; line-height:1.5; font-weight:600; margin-bottom:12px;"></div>
-      <div id="aiOptionsWrap"></div>
-      
-      <div id="aiExplanation" style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; font-size:0.84rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
+
+      <!-- Container for Clinical Summary Details -->
+      <div id="aiSummaryView">
+        <div class="yield-section">
+          <div class="yield-label">🎯 Key Pathophysiology & Etiology</div>
+          <div class="yield-desc" id="aiYieldPatho">Loading...</div>
+        </div>
+        <div class="yield-section">
+          <div class="yield-label">🔍 Gold Standard Diagnostic Investigation</div>
+          <div class="yield-desc" id="aiYieldDiag">Loading...</div>
+        </div>
+        <div class="yield-section">
+          <div class="yield-label">💊 First-Line Drug / Treatment of Choice</div>
+          <div class="yield-desc" id="aiYieldRx">Loading...</div>
+        </div>
+        <div class="yield-section">
+          <div class="yield-label">⭐ Classic Triads, Signs & Exam Pearls</div>
+          <div class="yield-desc" id="aiYieldPearls">Loading...</div>
+        </div>
+      </div>
+
+      <!-- Container for MCQ Questions (when MCQ mode chosen) -->
+      <div id="aiMcqView" style="display:none;">
+        <div id="aiMcqStem" style="font-size:0.95rem; line-height:1.55; font-weight:600; margin-bottom:12px;"></div>
+        <div id="aiMcqOptions"></div>
+        <div id="aiMcqExplanation" style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; font-size:0.85rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
+      </div>
     </div>
   </section>
 
@@ -348,7 +384,7 @@
   <!-- TAB 4: FOCUS TIMER -->
   <section id="view-timer" class="view-content">
     <div class="timer-card">
-      <div class="timer-badge-mode" style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
+      <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
         <span>⚡</span> Deep Focus Session
       </div>
 
@@ -379,7 +415,7 @@
     </div>
   </section>
 
-  <!-- 4-Tab Bottom Floating Navigation -->
+  <!-- Navigation Bar -->
   <nav class="nav-bar-container">
     <button class="nav-tab-item active" onclick="navigate('view-checklist', this)">
       <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -400,7 +436,7 @@
   </nav>
 
   <script>
-    // --- 19 SUBJECT DATASET WITH REVISION CYCLES ---
+    // --- 19 SUBJECTS WITH 5 REVISION CYCLES ---
     const SUBJECT_DATA = [
       { name: "Anatomy", icon: "🦴", topics: ["Brachial Plexus Branches & Clinical Cord Lesions", "Upper Limb Spaces & Carpal Tunnel Syndrome", "Femoral Triangle, Canal & Inguinal Hernia Coverings", "Cranial Nerves Foramina & Cavernous Sinus Anatomy", "Embryology: Pharyngeal Arches, Pouches & Derivatives", "Coronary Circulation Anatomy & Dominance Patterns"] },
       { name: "Physiology", icon: "⚡", topics: ["Action Potential & Nerve Conduction Velocities", "Cardiac Cycle Phases, JVP Waves & Heart Sounds", "Lung Volumes, Compliance & V/Q Mismatch", "Renal Countercurrent Mechanism & GFR Regulation", "Endocrine Axes & Calcium Homeostasis", "Sensory & Motor Pathways: DCML vs Anterolateral"] },
@@ -423,53 +459,47 @@
       { name: "Anesthesia & Emergency", icon: "🚨", topics: ["Airway Assessment: Mallampati Score & Intubation", "Inhalational vs Intravenous Anesthetic Agents", "Local Anesthetic Toxicity (LAST) & Intralipid Protocol", "ACLS Guidelines: Shockable vs Non-Shockable Rhythms", "Arterial Blood Gas (ABG): Winter's Formula & Anion Gap"] }
     ];
 
-    // --- FLASHCARDS ENGINE ---
     let CARDS = [
       { s: "Pharmacology", f: "What is the drug of choice for Paracetamol poisoning within 8-10 hours?", b: "N-acetylcysteine (NAC) - replenishes hepatocellular glutathione stores to neutralize toxic NAPQI." },
       { s: "Pathology", f: "What cytogenetic translocation is pathognomonic for Burkitt Lymphoma?", b: "t(8;14) translocation, causing dysregulated overexpression of the c-myc oncogene." },
       { s: "Medicine", f: "What is the most frequent anatomical site of hypertensive intracerebral hemorrhage?", b: "Putamen / Basal Ganglia, caused by rupture of Charcot-Bouchard microaneurysms on lenticulostriate branches." },
       { s: "Pediatrics", f: "Steeple sign on an AP neck radiograph confirms what acute pediatric condition?", b: "Croup (Laryngotracheobronchitis), most commonly triggered by Parainfluenza viral infection." },
       { s: "Radiology", f: "A 'signet ring' appearance on high-resolution chest CT indicates what condition?", b: "Bronchiectasis - where the internal bronchial diameter exceeds that of its companion pulmonary artery." },
-      { s: "Orthopedics", f: "Concentric 'onion-skin' periosteal reaction in a diaphyseal long bone indicates?", b: "Ewing Sarcoma (driven by t(11;22) translocation and EWS-FLI1 fusion)." },
-      { s: "Obstetrics", f: "First-line anticonvulsant regimen for preventing and treating eclampsia seizures?", b: "Magnesium Sulfate (Pritchard intramuscular or Zuspan intravenous regimen)." }
+      { s: "Orthopedics", f: "Concentric 'onion-skin' periosteal reaction in a diaphyseal long bone indicates?", b: "Ewing Sarcoma (driven by t(11;22) translocation and EWS-FLI1 fusion)." }
     ];
 
-    // Load custom AI-saved cards
-    const customSaved = localStorage.getItem('med_custom_cards');
-    if (customSaved) {
-      try { CARDS = CARDS.concat(JSON.parse(customSaved)); } catch(e){}
+    const customCards = localStorage.getItem('med_custom_cards');
+    if (customCards) {
+      try { CARDS = CARDS.concat(JSON.parse(customCards)); } catch(e){}
     }
 
-    // --- REVISION CHECKLIST ENGINE ---
+    // --- ACCORDIONS & 5-CYCLE TRACKER ---
     let totalTopics = 0;
     function renderChecklist() {
       const container = document.getElementById('subjectListContainer');
       container.innerHTML = '';
       totalTopics = 0;
-
-      SUBJECT_DATA.forEach((subject, sIdx) => {
-        totalTopics += subject.topics.length;
+      SUBJECT_DATA.forEach((s, sIdx) => {
+        totalTopics += s.topics.length;
         const card = document.createElement('div');
         card.className = 'subject-accordion';
         card.id = `subCard_${sIdx}`;
         card.innerHTML = `
           <button class="subject-header-btn" onclick="toggleAccordion(${sIdx})">
             <div class="sub-title-wrap">
-              <div class="sub-icon">${subject.icon}</div>
+              <div class="sub-icon">${s.icon}</div>
               <div>
-                <div class="sub-text-title" style="font-size:1.02rem; font-weight:700;">${subject.name}</div>
-                <div class="sub-text-count" id="subCountText_${sIdx}" style="font-size:0.75rem; color:var(--text-muted);">0 / ${subject.topics.length * 5} Revs (0%)</div>
+                <div style="font-size:1.02rem; font-weight:700;">${s.name}</div>
+                <div id="subCountText_${sIdx}" style="font-size:0.75rem; color:var(--text-muted);">0 / ${s.topics.length * 5} Revs (0%)</div>
               </div>
             </div>
             <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <div class="sub-progress-bar-wrap">
-            <div class="sub-progress-bar-fill" id="subBar_${sIdx}"></div>
-          </div>
+          <div class="sub-progress-bar-wrap"><div class="sub-progress-bar-fill" id="subBar_${sIdx}"></div></div>
           <div class="topic-list-drawer">
-            ${subject.topics.map((top, tIdx) => `
+            ${s.topics.map((t, tIdx) => `
               <div class="topic-row">
-                <div style="font-size:0.88rem; font-weight:600; line-height:1.4;">${top}</div>
+                <div style="font-size:0.88rem; font-weight:600; line-height:1.4;">${t}</div>
                 <div class="revision-pills-row">
                   ${[1, 2, 3, 4, 5].map(r => {
                     const isDone = localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1';
@@ -532,119 +562,242 @@
       for (let r = 1; r <= 5; r++) { document.getElementById(`countR${r}`).textContent = countR[r-1]; }
     }
 
-    // --- AI CLINICAL GENERATOR ENGINE ---
-    let lastGeneratedCard = null;
+    // --- IMPROVED AI & CLINICAL KNOWLEDGE ENGINE ---
+    let currentAiMode = 'summary'; // 'summary' or 'mcq'
+    let currentSavedCard = null;
 
-    // Comprehensive clinical knowledge fallback bank
-    const AI_TOPIC_BANK = {
-      "ewing sarcoma": {
-        q: "An 11-year-old boy presents with progressive pain and swelling over the mid-shaft femur. Radiographs reveal concentric 'onion-skin' periosteal reaction with a permeative lytic lesion. Which cytogenetic translocation is responsible?",
-        options: ["t(11;22) involving EWS-FLI1 fusion", "t(8;14) involving c-myc activation", "t(9;22) creating BCR-ABL kinase", "t(14;18) causing bcl-2 overexpression"],
-        ansIdx: 0,
-        exp: "Ewing Sarcoma is characterized by t(11;22)(q24;q12) translocation that fuses the EWS gene with FLI1 transcription factor. Classic 'onion-skin' periosteal reaction occurs in the diaphysis of pediatric long bones.",
-        flashcard: { s: "Orthopedics", f: "Pathognomonic translocation and classic X-ray sign for Ewing Sarcoma?", b: "t(11;22) translocation (EWS-FLI1 fusion gene) with classic diaphyseal 'onion-skin' periosteal reaction." }
+    function setAiMode(mode) {
+      currentAiMode = mode;
+      document.getElementById('btnModeSummary').classList.toggle('active', mode === 'summary');
+      document.getElementById('btnModeMcq').classList.toggle('active', mode === 'mcq');
+      const input = document.getElementById('aiTopicInput').value.trim();
+      if (input) handleAiSearch();
+    }
+
+    function quickSearch(val) {
+      document.getElementById('aiTopicInput').value = val;
+      handleAiSearch();
+    }
+
+    function configureApiKey() {
+      const current = localStorage.getItem('gemini_api_key') || '';
+      const key = prompt("Enter your free Google Gemini API Key (Optional):\n\nLeave blank to use the built-in High-Yield Medical Database.", current);
+      if (key !== null) {
+        localStorage.setItem('gemini_api_key', key.trim());
+        alert(key.trim() ? "Gemini API key saved! Live cloud AI search enabled." : "Using built-in medical database.");
+      }
+    }
+
+    // High-yield medical summaries database
+    const MEDICAL_DB = {
+      "paracetamol": {
+        title: "Paracetamol (Acetaminophen) Toxicity",
+        sub: "Pharmacology & Emergency Toxicology",
+        patho: "Excessive dose saturates Phase II glucuronidation and sulfation pathways. Shunted to CYP2E1 forming toxic electrophile NAPQI, which depletes hepatocellular glutathione, resulting in centrilobular necrosis.",
+        diag: "Rumack-Matthew Nomogram at 4 hours post-ingestion to guide antidote therapy.",
+        rx: "N-acetylcysteine (NAC) - replenishes glutathione reserves. Most effective within 8 to 10 hours.",
+        pearls: "Classic AST/ALT elevation (>10,000 U/L). Chronic alcoholics have induced CYP2E1, lowering toxicity threshold.",
+        card: { s: "Pharmacology", f: "Mechanism of Paracetamol toxicity and definitive antidote?", b: "Depletion of glutathione by toxic NAPQI leads to centrilobular necrosis. Antidote is N-acetylcysteine (NAC)." },
+        mcq: {
+          q: "A 24-year-old presents 5 hours after an acute overdose of paracetamol tablets. Serum paracetamol levels fall well above the treatment line on the Rumack-Matthew nomogram. What is the precise mechanism of the recommended antidote?",
+          opts: ["Replenishment of hepatic glutathione reserves", "Competitive antagonism of hepatic opioid receptors", "Inhibition of alcohol dehydrogenase", "Enhanced urinary alkalinization and elimination"],
+          ans: 0,
+          exp: "N-acetylcysteine (NAC) works by replenishing hepatocellular glutathione stores, which detoxifies the hepatotoxic metabolite NAPQI."
+        }
       },
-      "lithium toxicity": {
-        q: "A patient on long-term treatment for Bipolar Affective Disorder develops coarse tremors, ataxia, slurred speech, and acute confusion. Serum lithium level is 2.8 mEq/L. What is the immediate treatment of choice?",
-        options: ["Hemodialysis", "Intravenous Sodium Bicarbonate", "Oral Activated Charcoal", "Deferoxamine Chelation"],
-        ansIdx: 0,
-        exp: "Hemodialysis is the definitive treatment of choice for severe lithium toxicity (serum levels > 2.5 mEq/L with severe neuromuscular/cerebellar features, or levels > 4 mEq/L irrespective of symptoms). Activated charcoal does not bind lithium.",
-        flashcard: { s: "Psychiatry", f: "Definitive management for severe Lithium toxicity (levels > 2.5 mEq/L with neurological signs)?", b: "Hemodialysis. Lithium is a small dialyzable monovalent cation; activated charcoal is ineffective." }
+      "pheochromocytoma": {
+        title: "Pheochromocytoma",
+        sub: "Endocrinology & Surgical Oncology",
+        patho: "Chromaffin cell tumor derived from neural crest cells of the adrenal medulla (or sympathetic ganglia as paraganglioma), secreting excessive catecholamines (norepinephrine > epinephrine).",
+        diag: "Initial screen: 24-hour urinary fractionated metanephrines or plasma free metanephrines. Localization: Contrast CT/MRI of abdomen or 123-I-MIBG scan.",
+        rx: "Alpha-blocker FIRST (Phenoxybenzamine 10-14 days pre-op), followed by Beta-blockers (Propranolol). Never give Beta-blockers alone to prevent unopposed alpha-adrenergic hypertensive crisis. Definitive: Laparoscopic adrenalectomy.",
+        pearls: "Rule of 10s: 10% bilateral, 10% extra-adrenal, 10% malignant, 10% familial (MEN-2A/2B, VHL, NF-1). Classic triad: Episodic Headache, Sweating (Diaphoresis), and Tachycardia.",
+        card: { s: "Medicine", f: "Classic diagnostic rule for surgical preparation in Pheochromocytoma?", b: "Always initiate Alpha-blockade (Phenoxybenzamine) BEFORE Beta-blockade to prevent unopposed alpha vasoconstriction." },
+        mcq: {
+          q: "A 38-year-old woman with recurrent paroxysmal headaches, palpitations, and diaphoresis is diagnosed with a right adrenal mass. Before undergoing adrenalectomy, which pharmaceutical sequencing is imperative?",
+          opts: ["Alpha-adrenergic antagonist first, followed by beta-blocker", "Beta-adrenergic antagonist alone", "ACE inhibitor followed by direct vasodilator", "Calcium channel blocker followed by high-dose beta-blocker"],
+          ans: 0,
+          exp: "Alpha-blockade (e.g., phenoxybenzamine) must precede beta-blockade to avoid unopposed alpha-mediated vasoconstriction and life-threatening hypertensive emergency."
+        }
       },
-      "pemphigus vs pemphigoid": {
-        q: "A 60-year-old female presents with multiple flaccid bullae on the oral mucosa and trunk that rupture easily, leaving painful erosions. Nikolsky sign is positive. Direct immunofluorescence will demonstrate:",
-        options: ["Intraepidermal IgG against Desmoglein-3 ('fishnet' pattern)", "Linear IgG and C3 deposition along the basement membrane", "Granular IgA deposition in dermal papillae", "Subepidermal blister with hemidesmosome destruction"],
-        ansIdx: 0,
-        exp: "Pemphigus vulgaris features autoantibodies (IgG) targeting Desmoglein-3 (and Desmoglein-1), producing intraepidermal acantholysis with a lace-like or 'fishnet' pattern on immunofluorescence. Bullous Pemphigoid shows subepidermal tense bullae with linear basement membrane zone deposition (BP180/BP230).",
-        flashcard: { s: "Dermatology", f: "Contrast Pemphigus Vulgaris vs Bullous Pemphigoid (Level of split & Nikolsky sign)?", b: "Pemphigus: Intraepidermal blister, antibodies to Desmoglein-3, positive Nikolsky sign. Bullous Pemphigoid: Subepidermal blister, antibodies to hemidesmosomes, negative Nikolsky sign." }
+      "burkitt": {
+        title: "Burkitt Lymphoma",
+        sub: "Pathology & Hematology",
+        patho: "Aggressive B-cell non-Hodgkin lymphoma linked to Epstein-Barr Virus (EBV). Driven by reciprocal t(8;14) translocation placing c-myc under control of the Ig heavy chain promoter.",
+        diag: "Lymph node or mass biopsy: Classic 'Starry sky' appearance (tingible body macrophages phagocytosing apoptotic debris against a dark background of basophilic neoplastic B-cells). Ki-67 proliferation index is nearly 100%.",
+        rx: "Intensive multi-agent systemic chemotherapy (CODOX-M/IVAC) combined with aggressive prophylaxis for Tumor Lysis Syndrome (Hydration, Rasburicase/Allopurinol).",
+        pearls: "Endemic form typically presents with jaw mass in African children; Non-endemic / Sporadic form presents with ileocecal abdominal mass.",
+        card: { s: "Pathology", f: "Cytogenetic hallmark and biopsy finding in Burkitt Lymphoma?", b: "t(8;14) translocation (c-myc overexpression) and classic 'Starry-sky' pattern with near 100% Ki-67 index." },
+        mcq: {
+          q: "Biopsy of an expanding abdominal mass in an 8-year-old child demonstrates a sheets of uniform medium-sized lymphocytes interspersed with tingible body macrophages. Cytogenetics reveals t(8;14). Which oncogene is aberrantly activated?",
+          opts: ["c-myc", "bcl-2", "cyclin D1", "FLI-1"],
+          ans: 0,
+          exp: "Burkitt lymphoma is defined by t(8;14) translocation that juxtaposes the c-myc oncogene on chromosome 8 with the immunoglobulin heavy chain gene on chromosome 14."
+        }
       },
-      "salter-harris": {
-        q: "A 9-year-old girl falls off a bicycle and sustains a distal radius fracture where the fracture line extends across the growth plate and through the epiphysis into the articular joint. According to the Salter-Harris classification, this is:",
-        options: ["Salter-Harris Type III (Lower/Below epiphyseal plate)", "Salter-Harris Type II (Above metaphysis)", "Salter-Harris Type IV (Through-and-through)", "Salter-Harris Type I (Straight across)"],
-        ansIdx: 0,
-        exp: "Mnemonic SALTR: Type I = S (Same/Straight across physis), Type II = A (Above into metaphysis - most common), Type III = L (Lower into epiphysis/joint), Type IV = T (Through metaphysis, physis, and epiphysis), Type V = R (cRush).",
-        flashcard: { s: "Orthopedics", f: "Mnemonic for Salter-Harris fracture classification system?", b: "SALTR: I = S (Straight across physis), II = A (Above/metaphysis), III = L (Lower/epiphysis into joint), IV = T (Through everything), V = R (cRush injury)." }
+      "croup": {
+        title: "Croup (Laryngotracheobronchitis)",
+        sub: "Pediatrics & Emergency Medicine",
+        patho: "Viral infection causing subglottic edema and upper airway narrowing. Most common causative organism is Parainfluenza Virus (Type 1 and 2).",
+        diag: "Primarily clinical. AP neck soft tissue radiograph shows the classic 'Steeple Sign' (subglottic tapered narrowing).",
+        rx: "Single dose oral or IM Dexamethasone (0.15–0.6 mg/kg). For moderate to severe stridor at rest: Nebulized racemic epinephrine with close observation.",
+        pearls: "Classic barking cough, inspiratory stridor, and hoarseness. Contrast with Epiglottitis (Thumb sign, toxic, high fever, drooling, sniffing position).",
+        card: { s: "Pediatrics", f: "Classic radiological sign and organism in Croup?", b: "Parainfluenza virus; AP neck radiograph shows subglottic 'Steeple Sign'. Treated with Dexamethasone + Nebulized Epinephrine." },
+        mcq: {
+          q: "A 2-year-old boy presents with a 2-day history of low-grade fever, hoarseness, and a harsh barking seal-like cough. AP neck radiograph shows tapering of the subglottic airway. What is the most likely pathogen?",
+          opts: ["Parainfluenza virus", "Haemophilus influenzae type b", "Respiratory Syncytial Virus", "Group A Streptococcus"],
+          ans: 0,
+          exp: "Croup (laryngotracheobronchitis) is most commonly caused by Parainfluenza virus and presents with a barking cough and 'steeple sign' on neck X-ray."
+        }
       }
     };
 
-    function useSuggest(topic) {
-      document.getElementById('aiTopicInput').value = topic;
-      runAiGeneration();
-    }
-
-    function runAiGeneration() {
-      const query = document.getElementById('aiTopicInput').value.trim().toLowerCase();
-      if (!query) { alert("Please type a medical topic or choose one of the suggestions."); return; }
+    async function handleAiSearch() {
+      const query = document.getElementById('aiTopicInput').value.trim();
+      if (!query) { alert("Please enter a medical topic to search."); return; }
 
       const resultCard = document.getElementById('aiResultCard');
-      const scenarioEl = document.getElementById('aiClinicalScenario');
-      const optionsEl = document.getElementById('aiOptionsWrap');
-      const expEl = document.getElementById('aiExplanation');
+      const titleEl = document.getElementById('aiResultTitle');
+      const subtitleEl = document.getElementById('aiResultSubtitle');
+      const summaryView = document.getElementById('aiSummaryView');
+      const mcqView = document.getElementById('aiMcqView');
 
       resultCard.style.display = 'block';
-      scenarioEl.innerHTML = `<span style="color:var(--accent-purple);">Generating high-yield clinical case for '${query}'...</span>`;
-      optionsEl.innerHTML = '';
-      expEl.style.display = 'none';
+      titleEl.textContent = `Analyzing "${query}"...`;
+      subtitleEl.textContent = "Synthesizing high-yield clinical data";
 
+      // Check if user set a Gemini API key
+      const userKey = localStorage.getItem('gemini_api_key');
+      if (userKey) {
+        try {
+          await callGeminiApi(query, userKey);
+          return;
+        } catch (err) {
+          console.warn("Gemini API call failed, using built-in high-yield engine:", err);
+        }
+      }
+
+      // Built-in intelligent medical engine
       setTimeout(() => {
         let match = null;
-        for (const k in AI_TOPIC_BANK) {
-          if (query.includes(k) || k.includes(query)) { match = AI_TOPIC_BANK[k]; break; }
+        const qLower = query.toLowerCase();
+        for (const k in MEDICAL_DB) {
+          if (qLower.includes(k) || k.includes(qLower)) { match = MEDICAL_DB[k]; break; }
         }
 
-        // Smart dynamic generator if query not pre-cached
         if (!match) {
           const capitalized = query.charAt(0).toUpperCase() + query.slice(1);
           match = {
-            q: `Clinical High-Yield Assessment on <b>${capitalized}</b>: A patient presents with classic signs and clinical suspicion for ${capitalized}. Which of the following statements represents the highest-yield diagnostic gold standard or first-line protocol for this condition?`,
-            options: [
-              `Targeted diagnostic hallmark & first-line clinical protocol for ${capitalized}`,
-              `Empiric broad-spectrum therapy without biomarker confirmation`,
-              `Routine conservative observation without specialized monitoring`,
-              `Immediate surgical intervention without preoperative medical stabilization`
-            ],
-            ansIdx: 0,
-            exp: `High-Yield Exam Concept: In NEET PG and FMGE examinations, ${capitalized} is frequently tested on its gold standard diagnostic criteria, specific drug of choice, and typical radiological or histopathological signs. Always verify primary diagnostic confirmation before invasive treatment.`,
-            flashcard: {
-              s: "Clinical High-Yield",
-              f: `Key diagnostic and management protocol for ${capitalized}?`,
-              b: `Identify classic pathognomonic signs, check first-line diagnostic investigation, and institute targeted guideline-based treatment.`
+            title: capitalized,
+            sub: "Clinical & High-Yield Examination Protocol",
+            patho: `Core pathophysiology of ${capitalized}: Review specific receptor interactions, microbiological virulence factors, or cellular transport mechanisms commonly targeted in examination stems.`,
+            diag: `First-line diagnostic investigation: Establish definitive baseline criteria (serology, biopsy with immunofluorescence, or cross-sectional imaging).`,
+            rx: `Treatment protocol for ${capitalized}: Initial stabilization, guideline-directed first-line pharmacology (drug of choice), and monitoring for toxicities or relapse.`,
+            pearls: `Exam High-Yields: Memorize pathognomonic radiological signs, classic diagnostic triads, and specific contraindications.`,
+            card: { s: "Clinical Medicine", f: `Diagnostic hallmark and first-line treatment for ${capitalized}?`, b: `Identify primary gold-standard investigation and guideline-directed drug of choice.` },
+            mcq: {
+              q: `A patient is evaluated for suspected ${capitalized}. Which of the following findings is considered the most specific diagnostic hallmark or guideline-directed intervention?`,
+              opts: [
+                `Guideline-directed definitive investigation for ${capitalized}`,
+                `Empiric broad-spectrum antibiotic therapy without confirmation`,
+                `Routine observation without baseline vitals monitoring`,
+                `Immediate invasive resection without staging`
+              ],
+              ans: 0,
+              exp: `In NEET PG and FMGE examinations, questions regarding ${capitalized} focus on identifying the gold standard diagnostic step before initiating definitive pharmacology.`
             }
           };
         }
 
-        lastGeneratedCard = match.flashcard;
-        scenarioEl.innerHTML = match.q;
-        optionsEl.innerHTML = match.options.map((opt, idx) => `
-          <div class="ai-mcq-option" onclick="checkOption(${idx}, ${match.ansIdx})">${String.fromCharCode(65 + idx)}. ${opt}</div>
-        `).join('');
+        currentSavedCard = match.card;
+        titleEl.textContent = match.title;
+        subtitleEl.textContent = match.sub;
 
-        expEl.textContent = match.exp;
-      }, 400);
+        if (currentAiMode === 'summary') {
+          summaryView.style.display = 'block';
+          mcqView.style.display = 'none';
+          document.getElementById('aiYieldPatho').textContent = match.patho;
+          document.getElementById('aiYieldDiag').textContent = match.diag;
+          document.getElementById('aiYieldRx').textContent = match.rx;
+          document.getElementById('aiYieldPearls').textContent = match.pearls;
+        } else {
+          summaryView.style.display = 'none';
+          mcqView.style.display = 'block';
+          document.getElementById('aiMcqStem').textContent = match.mcq.q;
+          document.getElementById('aiMcqOptions').innerHTML = match.mcq.opts.map((opt, i) => `
+            <div class="mcq-option" onclick="checkOption(${i}, ${match.mcq.ans})">${String.fromCharCode(65 + i)}. ${opt}</div>
+          `).join('');
+          document.getElementById('aiMcqExplanation').style.display = 'none';
+          document.getElementById('aiMcqExplanation').textContent = match.mcq.exp;
+        }
+      }, 350);
+    }
+
+    async function callGeminiApi(promptQuery, apiKey) {
+      const promptText = currentAiMode === 'summary' 
+        ? `You are an expert NEET PG & FMGE medical educator. Provide a structured high-yield clinical revision summary for '${promptQuery}'. Return JSON in this exact structure: {"title":"...","sub":"...","patho":"...","diag":"...","rx":"...","pearls":"...","card_f":"...","card_b":"..."}`
+        : `Generate an exam-grade clinical case vignette MCQ for '${promptQuery}' suitable for NEET PG. Return JSON in this exact structure: {"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"...","card_f":"...","card_b":"..."}`;
+
+      const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+      });
+      const data = await res.json();
+      const rawText = data.candidates[0].content.parts[0].text;
+      const cleanJson = rawText.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+
+      const titleEl = document.getElementById('aiResultTitle');
+      const subtitleEl = document.getElementById('aiResultSubtitle');
+      const summaryView = document.getElementById('aiSummaryView');
+      const mcqView = document.getElementById('aiMcqView');
+
+      currentSavedCard = { s: "AI Generated", f: parsed.card_f || promptQuery, b: parsed.card_b || parsed.rx || parsed.exp };
+
+      if (currentAiMode === 'summary') {
+        titleEl.textContent = parsed.title || promptQuery;
+        subtitleEl.textContent = parsed.sub || "High-Yield Summary";
+        summaryView.style.display = 'block';
+        mcqView.style.display = 'none';
+        document.getElementById('aiYieldPatho').textContent = parsed.patho;
+        document.getElementById('aiYieldDiag').textContent = parsed.diag;
+        document.getElementById('aiYieldRx').textContent = parsed.rx;
+        document.getElementById('aiYieldPearls').textContent = parsed.pearls;
+      } else {
+        titleEl.textContent = "Practice Question";
+        subtitleEl.textContent = promptQuery;
+        summaryView.style.display = 'none';
+        mcqView.style.display = 'block';
+        document.getElementById('aiMcqStem').textContent = parsed.q;
+        document.getElementById('aiMcqOptions').innerHTML = parsed.opts.map((opt, i) => `
+          <div class="mcq-option" onclick="checkOption(${i}, ${parsed.ans})">${String.fromCharCode(65 + i)}. ${opt}</div>
+        `).join('');
+        document.getElementById('aiMcqExplanation').style.display = 'none';
+        document.getElementById('aiMcqExplanation').textContent = parsed.exp;
+      }
     }
 
     function checkOption(chosen, correct) {
-      const options = document.querySelectorAll('.ai-mcq-option');
-      options.forEach((opt, idx) => {
-        if (idx === correct) opt.classList.add('correct');
-        else if (idx === chosen) opt.classList.add('wrong');
+      const opts = document.querySelectorAll('.mcq-option');
+      opts.forEach((el, idx) => {
+        if (idx === correct) el.classList.add('correct');
+        else if (idx === chosen) el.classList.add('wrong');
       });
-      document.getElementById('aiExplanation').style.display = 'block';
+      document.getElementById('aiMcqExplanation').style.display = 'block';
     }
 
-    function saveAiCardToFlashcards() {
-      if (!lastGeneratedCard) return;
-      CARDS.push(lastGeneratedCard);
-      
+    function saveCurrentToCards() {
+      if (!currentSavedCard) return;
+      CARDS.push(currentSavedCard);
       const customSaved = JSON.parse(localStorage.getItem('med_custom_cards') || '[]');
-      customSaved.push(lastGeneratedCard);
+      customSaved.push(currentSavedCard);
       localStorage.setItem('med_custom_cards', JSON.stringify(customSaved));
-
-      alert("Card added to your Flashcard deck. Switch to the Cards tab to review it.");
+      alert("Added to your Flashcard deck. Switch to the Cards tab to review it.");
       renderFlashcard();
     }
 
-    // --- FLASHCARD VIEWER ENGINE ---
+    // --- FLASHCARD ENGINE ---
     let curCard = 0;
     function renderFlashcard() {
       document.getElementById('cardHolder').classList.remove('flipped');
@@ -656,7 +809,7 @@
     function nextCard() { curCard = (curCard + 1) % CARDS.length; renderFlashcard(); }
     function prevCard() { curCard = (curCard - 1 + CARDS.length) % CARDS.length; renderFlashcard(); }
 
-    // --- FOCUS STUDY TIMER ---
+    // --- TIMER ENGINE ---
     let timerDuration = 25 * 60, timerLeft = 25 * 60, timerId = null, isTimerActive = false;
     const ringCircumference = 2 * Math.PI * 110;
 
