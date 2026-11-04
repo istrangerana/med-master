@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="MedMaster">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <title>MedMaster - NEET PG & FMGE Prep</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #111827;
+      --surface-border: #1f2937;
+      --primary: #0284c7;
+      --primary-light: #38bdf8;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --card-bg: #1f2937;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg); color: var(--text); padding-bottom: 80px; min-height: 100vh; }
+    header { background: var(--surface); padding: 16px 20px; border-bottom: 1px solid var(--surface-border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+    .brand { font-size: 1.25rem; font-weight: 700; color: var(--primary-light); display: flex; align-items: center; gap: 8px; }
+    .exam-badge { background: rgba(2, 132, 199, 0.2); color: var(--primary-light); padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--primary); }
+    .container { max-width: 640px; margin: 0 auto; padding: 16px; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Cards */
+    .card { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .card-title { font-size: 0.95rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+
+    /* Stats Grid */
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .stat-box { background: var(--card-bg); border-radius: 8px; padding: 12px; text-align: center; }
+    .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--primary-light); }
+    .stat-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* Subject Checklist */
+    .subject-block { background: var(--surface); border: 1px solid var(--surface-border); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
+    .subject-header { padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+    .subject-title { font-weight: 600; font-size: 1rem; }
+    .subject-progress { font-size: 0.8rem; color: var(--text-muted); }
+    .subject-topics { padding: 0 16px 14px 16px; display: none; border-top: 1px solid var(--surface-border); }
+    .topic-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .topic-item:last-child { border-bottom: none; }
+    .topic-label { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; cursor: pointer; flex: 1; }
+    .topic-checkbox { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
+    .rev-badges { display: flex; gap: 6px; }
+    .rev-btn { background: var(--card-bg); border: 1px solid var(--surface-border); color: var(--text-muted); padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
+    .rev-btn.done { background: var(--success); color: #fff; border-color: var(--success); }
+
+    /* Flashcard Studio */
+    .flashcard-wrapper { perspective: 1000px; height: 260px; margin: 16px 0; cursor: pointer; }
+    .flashcard { width: 100%; height: 100%; border-radius: 14px; position: relative; transform-style: preserve-3d; transition: transform 0.4s ease; border: 1px solid var(--surface-border); background: var(--surface); }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; text-align: center; border-radius: 14px; }
+    .card-front { color: var(--text); }
+    .card-back { transform: rotateY(180deg); background: #162032; color: #bae6fd; }
+    .card-sub-tag { font-size: 0.75rem; text-transform: uppercase; color: var(--primary-light); margin-bottom: 12px; }
+    .card-text { font-size: 1.15rem; font-weight: 500; line-height: 1.4; }
+    .flip-hint { font-size: 0.75rem; color: var(--text-muted); position: absolute; bottom: 12px; }
+    .fc-controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+    .btn-rating { padding: 10px 0; border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+    .btn-again { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .btn-hard { background: rgba(245, 158, 11, 0.2); color: #fde68a; }
+    .btn-good { background: rgba(2, 132, 199, 0.2); color: #7dd3fc; }
+    .btn-easy { background: rgba(16, 185, 129, 0.2); color: #86efac; }
+
+    /* Bottom Navigation */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--surface-border); display: flex; justify-content: space-around; padding: 8px 0; z-index: 100; }
+    .nav-btn { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 0.75rem; cursor: pointer; width: 33.3%; }
+    .nav-btn.active { color: var(--primary-light); font-weight: 600; }
+    .nav-icon { font-size: 1.25rem; }
+
+    /* Inputs */
+    .input-field { width: 100%; background: var(--card-bg); border: 1px solid var(--surface-border); color: #fff; padding: 10px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 10px; }
+    .primary-btn { width: 100%; background: var(--primary); color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">🩺 MedMaster</div>
+    <div class="exam-badge">NEET PG / FMGE</div>
+  </header>
+
+  <div class="container">
+    <!-- TAB 1: PLANNER -->
+    <section id="tab-planner" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-val" id="stat-progress">0%</div>
+          <div class="stat-label">Syllabus Done</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-rev1">0</div>
+          <div class="stat-label">Rev 1 Done</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="stat-cards">0</div>
+          <div class="stat-label">Cards Mastered</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Daily Study Target</div>
+        <input type="text" id="target-input" class="input-field" placeholder="e.g. Read CVS Pathology + 50 MCQs">
+        <button class="primary-btn" onclick="saveTarget()">Save Focus Goal</button>
+        <p id="target-display" style="margin-top: 12px; font-size: 0.9rem; color: #7dd3fc;"></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Backup & Restore</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Export your study records or import from backup.</p>
+        <button class="primary-btn" onclick="exportData()" style="background: var(--card-bg);">Download JSON Backup</button>
+      </div>
+    </section>
+
+    <!-- TAB 2: SUBJECT CHECKLIST -->
+    <section id="tab-subjects" class="tab-content">
+      <div id="subject-list-container"></div>
+    </section>
+
+    <!-- TAB 3: FLASHCARDS -->
+    <section id="tab-flashcards" class="tab-content">
+      <div class="card-title">High-Yield Revision Deck</div>
+      <div class="flashcard-wrapper" onclick="flipCard()">
+        <div class="flashcard" id="active-card">
+          <div class="card-face card-front">
+            <div class="card-sub-tag" id="fc-subject">PHARMACOLOGY</div>
+            <div class="card-text" id="fc-front">Drug of choice for Paracetamol poisoning?</div>
+            <div class="flip-hint">Tap card to flip answer</div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-sub-tag">EXPLANATION</div>
+            <div class="card-text" id="fc-back">N-acetylcysteine (NAC) - restores glutathione reserves within 8-10 hours.</div>
+            <div class="flip-hint">Tap to flip back</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fc-controls">
+        <button class="btn-rating btn-again" onclick="rateCard(1)">Again</button>
+        <button class="btn-rating btn-hard" onclick="rateCard(2)">Hard</button>
+        <button class="btn-rating btn-good" onclick="rateCard(3)">Good</button>
+        <button class="btn-rating btn-easy" onclick="rateCard(4)">Easy</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchTab('planner', this)">
+      <span class="nav-icon">📅</span>
+      <span>Planner</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('subjects', this)">
+      <span class="nav-icon">📚</span>
+      <span>19 Subjects</span>
+    </button>
+    <button class="nav-btn" onclick="switchTab('flashcards', this)">
+      <span class="nav-icon">⚡</span>
+      <span>Flashcards</span>
+    </button>
+  </nav>
+
+  <script>
+    const SUBJECT_DATA = [
+      { name: "Anatomy", topics: ["Brachial Plexus & Upper Limb", "Cranial Nerves & Foramina", "Perineum, Pelvis & Urethra", "Pharyngeal Arches & Embryology"] },
+      { name: "Physiology", topics: ["Action Potential & Nerve Conduction", "Cardiac Cycle, Pressures & ECG", "Respiratory Mechanics & Ventilation-Perfusion", "Endocrine Axis Regulation"] },
+      { name: "Biochemistry", topics: ["Glycogen & Lysosomal Storage Diseases", "Amino Acid Metabolic Disorders", "Vitamins, Coenzymes & Deficiencies", "Lipoprotein Metabolism & Hyperlipidemias"] },
+      { name: "Pathology", topics: ["Cellular Adaptations & Apoptosis", "Neoplasia Markers & Translocations", "Hematology, Anemias & Leukemias", "Glomerulonephritis & Renal Biopsies"] },
+      { name: "Pharmacology", topics: ["Autonomic Nervous System Receptors", "Antimicrobials, Mechanisms & Resistance", "Antiarrhythmics & Heart Failure Drugs", "Psychopharmacology & Antiepileptics"] },
+      { name: "Microbiology", topics: ["Bacterial Toxins & Special Media", "Virology (Hepatitis Viruses & HIV)", "Mycology (Dimorphic Fungi & Opportunists)", "Parasitology (Malaria, Leishmania, Helminthes)"] },
+      { name: "Forensic Medicine", topics: ["IPC/BNS Sections & Legal Procedures", "Thanatology, Algor, Rigor & Postmortem", "Toxicology (Organophosphates, Snake Envenomation)", "Mechanical Injuries & Firearm Wound Patterns"] },
+      { name: "PSM / Comm. Medicine", topics: ["Epidemiological Study Designs & Biases", "Biostatistics, Tests of Significance & Normal Curve", "National Health Programs & Targets", "Vaccines, Cold Chain & Universal Immunization"] },
+      { name: "Ophthalmology", topics: ["Glaucoma Workup & Treatment", "Cataract Surgical Techniques & Complications", "Uveitis Etiologies & Fundus Changes", "Diabetic & Hypertensive Retinopathy"] },
+      { name: "ENT", topics: ["CSOM & Cholesteatoma Management", "Hearing Loss Tuning Fork Tests & Audiograms", "Epistaxis Sources & Interventions", "Laryngeal Cancers & Staging"] },
+      { name: "General Medicine", topics: ["Acute Coronary Syndromes & Cardiogenic Shock", "Stroke Syndromes & Acute Localisation", "Diabetes Complications, DKA & HHS", "Pulmonology (COPD, Asthma, Interstitial Diseases)"] },
+      { name: "General Surgery", topics: ["Thyroid Neoplasms & Node Management", "Acute Abdomen, Bowel Obstruction & Appendicitis", "Burn Resuscitation Protocols", "Breast Lesions & Triple Assessment"] },
+      { name: "Pediatrics", topics: ["Neonatal Resuscitation & Pathological Jaundice", "Developmental Milestones & Red Flags", "Inborn Errors of Metabolism Crises", "Cyanotic vs Acyanotic Congenital Heart Diseases"] },
+      { name: "OBG", topics: ["Postpartum & Antepartum Hemorrhage Protocols", "Pre-eclampsia & Eclampsia Management", "Cervical & Endometrial Malignancies", "Secondary Amenorrhea Algorithmic Workup"] },
+      { name: "Orthopedics", topics: ["Fractures around Shoulder & Elbow", "Lower Limb Injuries (Neck of Femur, Tibia)", "Bone Tumors & Radiology (Sunray, Onion-peel)", "Nerve Injuries Associated with Fractures"] },
+      { name: "Dermatology", topics: ["Vesiculobullous Disorders (Pemphigus vs Pemphigoid)", "Papulosquamous Lesions (Psoriasis, Lichen Planus)", "Leprosy Classification & Reactions", "Sexually Transmitted Infections Protocols"] },
+      { name: "Psychiatry", topics: ["Mood Disorders (Bipolar & Major Depression)", "Schizophrenia Diagnostic Criteria & Treatment", "Anxiety & Somatoform Disorders", "Substance Dependence & Withdrawal Syndromes"] },
+      { name: "Radiology", topics: ["Chest X-Ray Classic Signs", "Head CT Signs (EDH vs SDH vs SAH)", "Radiation Safety & Dosimetry", "Barium Studies & Fluoroscopy Findings"] },
+      { name: "Anesthesia", topics: ["Inhalational Anesthetic Agents & MAC", "Local Anesthetics & Toxicity (LAST)", "CPR & ACLS Algorithms", "Spinal vs Epidural Anesthesia Differences"] }
+    ];
+
+    const DEFAULT_CARDS = [
+      { subject: "Pharmacology", front: "Drug of Choice for Paracetamol (Acetaminophen) Poisoning?", back: "N-acetylcysteine (NAC) - replenishes hepatocellular glutathione reserves within 8-10 hours." },
+      { subject: "Pathology", front: "Starry sky appearance on lymph node biopsy is characteristic of?", back: "Burkitt Lymphoma (t(8;14) translocation leading to c-myc overexpression)." },
+      { subject: "Medicine", front: "What is the classic Hakim-Adams triad in Normal Pressure Hydrocephalus (NPH)?", back: "Wet, Wobbly, Wacky (Urinary incontinence, Gait ataxia, Cognitive impairment)." },
+      { subject: "Microbiology", front: "Which selective culture medium is used for Corynebacterium diphtheriae?", back: "Loeffler's Serum Slope and Potassium Tellurite Agar (forms black/grey colonies)." },
+      { subject: "Surgery", front: "Psammoma bodies are classically seen in which thyroid carcinoma?", back: "Papillary Thyroid Carcinoma (also shows Orphan Annie eyes and nuclear grooves)." }
+    ];
+
+    let currentCardIdx = 0;
+
+    function initSubjects() {
+      const container = document.getElementById('subject-list-container');
+      container.innerHTML = '';
+
+      SUBJECT_DATA.forEach((subj, sIdx) => {
+        let block = document.createElement('div');
+        block.className = 'subject-block';
+
+        let header = document.createElement('div');
+        header.className = 'subject-header';
+        header.innerHTML = `<span class="subject-title">${subj.name}</span><span class="subject-progress" id="sprog-${sIdx}">0/${subj.topics.length}</span>`;
+        header.onclick = () => toggleSubject(sIdx);
+
+        let topicWrap = document.createElement('div');
+        topicWrap.className = 'subject-topics';
+        topicWrap.id = `topics-${sIdx}`;
+
+        subj.topics.forEach((top, tIdx) => {
+          let item = document.createElement('div');
+          item.className = 'topic-item';
+
+          let isChecked = localStorage.getItem(`top_${sIdx}_${tIdx}`) === 'true';
+          let rev1 = localStorage.getItem(`rev1_${sIdx}_${tIdx}`) === 'true';
+
+          item.innerHTML = `
+            <label class="topic-label">
+              <input type="checkbox" class="topic-checkbox" ${isChecked ? 'checked' : ''} onchange="toggleTopic(${sIdx}, ${tIdx}, this.checked)">
+              <span>${top}</span>
+            </label>
+            <div class="rev-badges">
+              <button class="rev-btn ${rev1 ? 'done' : ''}" onclick="toggleRev(${sIdx}, ${tIdx}, 1, this)">Rev 1</button>
+            </div>
+          `;
+          topicWrap.appendChild(item);
+        });
+
+        block.appendChild(header);
+        block.appendChild(topicWrap);
+        container.appendChild(block);
+        updateSubjProgress(sIdx);
+      });
+      calcStats();
+    }
+
+    function toggleSubject(idx) {
+      let el = document.getElementById(`topics-${idx}`);
+      el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function toggleTopic(sIdx, tIdx, val) {
+      localStorage.setItem(`top_${sIdx}_${tIdx}`, val);
+      updateSubjProgress(sIdx);
+      calcStats();
+    }
+
+    function toggleRev(sIdx, tIdx, revNum, btn) {
+      let key = `rev${revNum}_${sIdx}_${tIdx}`;
+      let cur = localStorage.getItem(key) === 'true';
+      localStorage.setItem(key, !cur);
+      btn.classList.toggle('done', !cur);
+      calcStats();
+    }
+
+    function updateSubjProgress(sIdx) {
+      let total = SUBJECT_DATA[sIdx].topics.length;
+      let done = 0;
+      for (let i = 0; i < total; i++) {
+        if (localStorage.getItem(`top_${sIdx}_${i}`) === 'true') done++;
+      }
+      document.getElementById(`sprog-${sIdx}`).innerText = `${done}/${total}`;
+    }
+
+    function calcStats() {
+      let total = 0;
+      let done = 0;
+      let rev1 = 0;
+
+      SUBJECT_DATA.forEach((s, sIdx) => {
+        s.topics.forEach((_, tIdx) => {
+          total++;
+          if (localStorage.getItem(`top_${sIdx}_${tIdx}`) === 'true') done++;
+          if (localStorage.getItem(`rev1_${sIdx}_${tIdx}`) === 'true') rev1++;
+        });
+      });
+
+      let pct = total > 0 ? Math.round((done / total) * 100) : 0;
+      document.getElementById('stat-progress').innerText = `${pct}%`;
+      document.getElementById('stat-rev1').innerText = rev1;
+      document.getElementById('stat-cards').innerText = localStorage.getItem('cards_mastered') || '0';
+    }
+
+    function loadCard() {
+      let card = DEFAULT_CARDS[currentCardIdx];
+      document.getElementById('fc-subject').innerText = card.subject;
+      document.getElementById('fc-front').innerText = card.front;
+      document.getElementById('fc-back').innerText = card.back;
+      document.getElementById('active-card').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      document.getElementById('active-card').classList.toggle('flipped');
+    }
+
+    function rateCard(rating) {
+      if (rating >= 3) {
+        let cur = parseInt(localStorage.getItem('cards_mastered') || '0', 10);
+        localStorage.setItem('cards_mastered', cur + 1);
+      }
+      currentCardIdx = (currentCardIdx + 1) % DEFAULT_CARDS.length;
+      loadCard();
+      calcStats();
+    }
+
+    function saveTarget() {
+      let val = document.getElementById('target-input').value;
+      if (!val) return;
+      localStorage.setItem('med_target', val);
+      document.getElementById('target-display').innerText = `🎯 Today's Goal: ${val}`;
+      document.getElementById('target-input').value = '';
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function exportData() {
+      let blob = new Blob([JSON.stringify(localStorage, null, 2)], { type: 'application/json' });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `medmaster-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+    }
+
+    window.onload = () => {
+      initSubjects();
+      loadCard();
+      let savedTarget = localStorage.getItem('med_target');
+      if (savedTarget) document.getElementById('target-display').innerText = `🎯 Today's Goal: ${savedTarget}`;
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration error:', err));
+      }
+    };
+  </script>
+</body>
+</html>
