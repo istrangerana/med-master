@@ -1,19 +1,43 @@
 {
+  "id": "/medmaster-app",
   "name": "MedMaster - NEET PG & FMGE Prep",
   "short_name": "MedMaster",
   "description": "High-yield topic checklist, revision tracker, and spaced-repetition flashcards for NEET PG and FMGE aspirants.",
-  "start_url": "./index.html",
-  "scope": "./",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
+  "orientation": "portrait-primary",
   "background_color": "#090d16",
   "theme_color": "#0284c7",
+  "categories": ["medical", "education"],
   "icons": [
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "MedMaster Study Planner"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "MedMaster Revision Engine"
     }
   ]
 }
