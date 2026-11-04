@@ -13,101 +13,117 @@
 
   <style>
     :root {
-      --bg: #070b14;
-      --card-bg: rgba(17, 24, 39, 0.75);
-      --card-hover: rgba(30, 41, 59, 0.85);
-      --border: rgba(255, 255, 255, 0.08);
-      --border-focus: rgba(56, 189, 248, 0.4);
+      --bg: #050811;
+      --card-bg: rgba(13, 20, 36, 0.72);
+      --card-border: rgba(56, 189, 248, 0.16);
       --primary: #0284c7;
-      --primary-glow: rgba(2, 132, 199, 0.35);
       --primary-light: #38bdf8;
       --accent-cyan: #06b6d4;
       --accent-emerald: #10b981;
-      --accent-rose: #f43f5e;
+      --accent-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+    /* Animated Aurora Background */
     body {
-      background: radial-gradient(circle at 15% 15%, #0f172a 0%, var(--bg) 100%);
+      background-color: var(--bg);
       color: var(--text-main);
       min-height: 100vh;
-      padding-bottom: 95px;
+      padding-bottom: 96px;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    /* Ambient Glow Backgrounds */
-    .glow-blob {
-      position: fixed; width: 280px; height: 280px;
-      border-radius: 50%; filter: blur(90px);
-      pointer-events: none; z-index: 0; opacity: 0.18;
+    .aurora-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0; pointer-events: none; overflow: hidden;
     }
-    .glow-top { top: -60px; right: -60px; background: var(--primary); }
-    .glow-mid { top: 45%; left: -80px; background: #6366f1; }
+    .aurora-orb {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.28;
+      animation: floatOrb 18s infinite alternate ease-in-out;
+    }
+    .orb-1 { width: 380px; height: 380px; background: #0284c7; top: -100px; left: -80px; animation-duration: 14s; }
+    .orb-2 { width: 320px; height: 320px; background: #6366f1; top: 35%; right: -100px; animation-duration: 20s; }
+    .orb-3 { width: 260px; height: 260px; background: #06b6d4; bottom: 80px; left: 15%; animation-duration: 16s; }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, 40px) scale(1.15); }
+      100% { transform: translate(-30px, 70px) scale(0.95); }
+    }
 
     /* Sticky Glass Header */
     header {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(7, 11, 20, 0.82);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border);
+      background: rgba(5, 8, 17, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--card-border);
       padding: 14px 20px;
       display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
     .brand-wrap { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
-      width: 36px; height: 36px; border-radius: 10px;
+      width: 38px; height: 38px; border-radius: 12px;
       background: linear-gradient(135deg, #0284c7, #06b6d4);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 14px var(--primary-glow);
+      box-shadow: 0 0 20px rgba(2, 132, 199, 0.6);
+      animation: pulseGlow 4s infinite alternate;
     }
-    .brand-icon svg { width: 20px; height: 20px; stroke: #fff; fill: none; }
-    .brand-title { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px; color: #fff; }
+    @keyframes pulseGlow {
+      0% { box-shadow: 0 0 10px rgba(2, 132, 199, 0.4); }
+      100% { box-shadow: 0 0 22px rgba(56, 189, 248, 0.75); }
+    }
+    .brand-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; }
+    .brand-title { font-size: 1.18rem; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
     .brand-title span { color: var(--primary-light); }
 
     .user-pill {
-      font-size: 0.78rem; font-weight: 600; padding: 7px 14px; border-radius: 30px;
-      background: rgba(56, 189, 248, 0.08); border: 1px solid var(--border-focus);
-      color: var(--primary-light); cursor: pointer; transition: all 0.2s;
+      font-size: 0.78rem; font-weight: 600; padding: 7px 15px; border-radius: 30px;
+      background: rgba(56, 189, 248, 0.12); border: 1px solid var(--primary-light);
+      color: var(--primary-light); cursor: pointer; transition: all 0.25s ease;
     }
-    .user-pill:active { transform: scale(0.96); background: rgba(56, 189, 248, 0.18); }
+    .user-pill:active { transform: scale(0.94); background: var(--primary); color: #fff; }
 
-    /* Main Container */
+    /* Views */
     .view-content { display: none; padding: 18px; max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
-    .view-content.active { display: block; animation: viewFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes viewFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .view-content.active { display: block; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Summary Bar */
-    .overall-stats-card {
-      background: linear-gradient(135deg, rgba(2,132,199,0.15) 0%, rgba(15,23,42,0.6) 100%);
-      border: 1px solid var(--border-focus);
-      border-radius: 20px; padding: 18px; margin-bottom: 20px;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    /* Grand Stats Dashboard */
+    .grand-stats-card {
+      background: linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(13,20,36,0.85) 100%);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      backdrop-filter: blur(20px);
+      border-radius: 24px; padding: 22px; margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
     }
-    .stat-text h3 { font-size: 1.35rem; font-weight: 800; color: #fff; }
-    .stat-text p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
-    .circle-stat {
-      width: 58px; height: 58px; border-radius: 50%;
-      background: conic-gradient(var(--accent-cyan) 0deg, rgba(255,255,255,0.06) 0deg);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.85rem; font-weight: 800; color: #fff; position: relative;
-    }
-    .circle-stat::before {
-      content: ""; position: absolute; inset: 5px; background: #0b1120; border-radius: 50%; z-index: 1;
-    }
-    .circle-stat span { position: relative; z-index: 2; }
+    .grand-stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .grand-stats-header h3 { font-size: 1.45rem; font-weight: 800; color: #fff; }
+    .grand-stats-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
 
-    /* Accordion Subject Cards */
+    /* Cycles Overview Bar */
+    .cycles-legend {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
+      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 14px; text-align: center;
+    }
+    .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .cycle-tag-count { font-size: 0.95rem; font-weight: 800; color: #fff; margin-top: 2px; }
+
+    /* Accordion Subject Card */
     .subject-accordion {
       background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 18px; margin-bottom: 14px; overflow: hidden;
-      transition: all 0.2s ease;
-      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px; margin-bottom: 14px; overflow: hidden;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
     }
-    .subject-accordion:hover { border-color: rgba(255,255,255,0.18); }
+    .subject-accordion:hover { border-color: rgba(56, 189, 248, 0.4); transform: translateY(-1px); }
     .subject-header-btn {
       width: 100%; padding: 16px 18px; background: none; border: none;
       display: flex; align-items: center; justify-content: space-between;
@@ -115,57 +131,71 @@
     }
     .sub-title-wrap { display: flex; align-items: center; gap: 14px; }
     .sub-icon {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+      width: 44px; height: 44px; border-radius: 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
+      display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .sub-text-title { font-size: 1rem; font-weight: 700; color: #fff; }
-    .sub-text-count { font-size: 0.74rem; color: var(--text-muted); margin-top: 2px; }
+    .sub-text-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
+    .sub-text-count { font-size: 0.74rem; color: var(--text-muted); margin-top: 3px; }
     .accordion-arrow {
-      width: 18px; height: 18px; stroke: var(--text-muted); transition: transform 0.25s ease;
+      width: 20px; height: 20px; stroke: var(--text-muted); transition: transform 0.3s ease;
     }
     .subject-accordion.open .accordion-arrow { transform: rotate(180deg); stroke: var(--primary-light); }
 
     .sub-progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.06); width: 100%; }
-    .sub-progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent-cyan)); transition: width 0.3s; }
+    .sub-progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent-cyan)); transition: width 0.4s ease; }
 
-    .topic-list-drawer { display: none; padding: 12px 18px 18px; border-top: 1px solid rgba(255,255,255,0.04); }
+    .topic-list-drawer { display: none; padding: 10px 16px 16px; border-top: 1px solid rgba(255,255,255,0.04); }
     .subject-accordion.open .topic-list-drawer { display: block; }
 
-    .topic-item-row {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
-      cursor: pointer;
+    /* Topic Box with 5 Revision Buttons */
+    .topic-row {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 14px; padding: 12px; margin-top: 10px;
+      transition: background 0.2s;
     }
-    .topic-checkbox {
-      width: 20px; height: 20px; border-radius: 6px;
-      border: 1.8px solid rgba(255,255,255,0.25);
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s; flex-shrink: 0;
+    .topic-row:hover { background: rgba(255,255,255,0.04); }
+    .topic-title-bar {
+      font-size: 0.9rem; font-weight: 600; color: #e2e8f0; line-height: 1.45;
+      margin-bottom: 10px;
     }
-    .topic-checkbox.checked {
-      background: var(--primary); border-color: var(--primary-light);
-    }
-    .topic-checkbox svg { display: none; width: 13px; height: 13px; stroke: #fff; stroke-width: 3; fill: none; }
-    .topic-checkbox.checked svg { display: block; }
-    .topic-name { font-size: 0.88rem; color: #e2e8f0; line-height: 1.4; }
-    .topic-item-row.checked-row .topic-name { text-decoration: line-through; color: var(--text-muted); }
 
-    /* Focus Study Timer Card */
+    .revision-pills-row {
+      display: flex; gap: 6px; align-items: center;
+    }
+    .rev-pill {
+      flex: 1; padding: 6px 2px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.04); color: var(--text-muted);
+      font-size: 0.72rem; font-weight: 700; text-align: center; cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .rev-pill:active { transform: scale(0.92); }
+    .rev-pill.done {
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      color: #fff; border-color: transparent;
+      box-shadow: 0 0 10px rgba(6,182,212,0.4);
+    }
+    .rev-pill.r5-done {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 0 12px rgba(16,185,129,0.5);
+    }
+
+    /* Focus Timer */
     .timer-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 26px; padding: 28px 20px; text-align: center;
-      backdrop-filter: blur(16px); box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 28px; padding: 30px 20px; text-align: center;
+      backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0,0,0,0.5);
     }
     .timer-badge-mode {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(2,132,199,0.12); border: 1px solid var(--border-focus);
+      background: rgba(2,132,199,0.14); border: 1px solid var(--card-border);
       color: var(--primary-light); font-size: 0.78rem; font-weight: 700;
       padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.8px;
     }
     .timer-circle-wrap { position: relative; width: 250px; height: 250px; margin: 24px auto; }
     .timer-circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-    .circle-base { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 9; }
+    .circle-base { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
     .circle-indicator {
       fill: none; stroke: url(#timerGrad); stroke-width: 9;
       stroke-linecap: round; stroke-dasharray: 691; stroke-dashoffset: 0;
@@ -173,45 +203,40 @@
     }
     .time-digits-display {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-size: 3.5rem; font-weight: 900; font-variant-numeric: tabular-nums;
+      font-size: 3.6rem; font-weight: 900; font-variant-numeric: tabular-nums;
       color: #fff; letter-spacing: -1.5px;
     }
-    
+
     .timer-chips-grid { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
     .preset-pill {
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
       color: var(--text-muted); padding: 8px 14px; border-radius: 12px;
       font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s;
     }
-    .preset-pill.active { background: var(--primary); color: #fff; border-color: var(--primary-light); }
+    .preset-pill.active { background: var(--primary); color: #fff; border-color: var(--primary-light); box-shadow: 0 0 14px rgba(2,132,199,0.5); }
     
-    .custom-set-bar { display: flex; gap: 10px; justify-content: center; align-items: center; margin-bottom: 24px; }
-    .custom-set-bar input {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      border-radius: 10px; color: #fff; padding: 8px; width: 75px; text-align: center;
-      font-size: 0.95rem; font-weight: 700; outline: none;
-    }
-    .custom-set-bar input:focus { border-color: var(--primary-light); }
-
     .timer-btn-row { display: flex; gap: 12px; justify-content: center; max-width: 360px; margin: 0 auto; }
     .btn-main-action {
       flex: 2; padding: 15px; border-radius: 16px; border: none;
-      background: linear-gradient(135deg, #0284c7, #0369a1); color: #fff;
-      font-weight: 700; font-size: 1.05rem; cursor: pointer; box-shadow: 0 4px 18px var(--primary-glow);
+      background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff;
+      font-weight: 700; font-size: 1.05rem; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(2,132,199,0.5); transition: 0.2s;
     }
+    .btn-main-action:active { transform: scale(0.97); }
     .btn-sub-action {
-      flex: 1; padding: 15px; border-radius: 16px; border: 1px solid var(--border);
+      flex: 1; padding: 15px; border-radius: 16px; border: 1px solid var(--card-border);
       background: rgba(255,255,255,0.05); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer;
     }
 
     /* Flashcard UI */
     .flashcard-deck-wrap { perspective: 1200px; margin-bottom: 22px; cursor: pointer; }
     .flashcard-inner-box {
-      min-height: 250px; background: var(--card-bg);
-      border: 1px solid var(--border); border-radius: 24px; padding: 28px;
+      min-height: 260px; background: var(--card-bg);
+      border: 1px solid var(--card-border); border-radius: 26px; padding: 28px;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       text-align: center; position: relative; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform-style: preserve-3d; backdrop-filter: blur(14px);
+      transform-style: preserve-3d; backdrop-filter: blur(20px);
+      box-shadow: 0 14px 40px rgba(0,0,0,0.4);
     }
     .flashcard-deck-wrap.flipped .flashcard-inner-box { transform: rotateY(180deg); }
     .card-face { backface-visibility: hidden; width: 100%; }
@@ -219,33 +244,37 @@
     .card-subject-tag {
       position: absolute; top: 18px; left: 20px;
       font-size: 0.72rem; text-transform: uppercase; font-weight: 700;
-      color: var(--accent-cyan); background: rgba(6,182,212,0.1);
-      padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(6,182,212,0.25);
+      color: var(--accent-cyan); background: rgba(6,182,212,0.12);
+      padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.3);
     }
-    .card-content-text { font-size: 1.15rem; font-weight: 600; line-height: 1.55; margin-top: 15px; }
+    .card-content-text { font-size: 1.15rem; font-weight: 600; line-height: 1.6; margin-top: 15px; }
 
-    /* Bottom Floating Navigation */
+    /* Bottom Navigation */
     .nav-bar-container {
       position: fixed; bottom: 0; left: 0; right: 0; height: 72px;
-      background: rgba(7, 11, 20, 0.88);
+      background: rgba(5, 8, 17, 0.88);
       backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--card-border);
       display: flex; justify-content: space-around; align-items: center; z-index: 45;
     }
     .nav-tab-item {
       background: none; border: none; color: var(--text-muted);
       display: flex; flex-direction: column; align-items: center; gap: 5px;
-      font-size: 0.72rem; font-weight: 600; cursor: pointer; flex: 1; transition: 0.2s;
+      font-size: 0.72rem; font-weight: 600; cursor: pointer; flex: 1; transition: 0.25s;
     }
-    .nav-tab-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .nav-tab-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; transition: 0.25s; }
     .nav-tab-item.active { color: var(--primary-light); }
+    .nav-tab-item.active svg { transform: translateY(-2px); stroke: var(--primary-light); filter: drop-shadow(0 0 6px rgba(56,189,248,0.5)); }
   </style>
 </head>
 <body>
 
-  <!-- Ambient Light Orbs -->
-  <div class="glow-blob glow-top"></div>
-  <div class="glow-blob glow-mid"></div>
+  <!-- Animated Aurora Glow Elements -->
+  <div class="aurora-bg">
+    <div class="aurora-orb orb-1"></div>
+    <div class="aurora-orb orb-2"></div>
+    <div class="aurora-orb orb-3"></div>
+  </div>
 
   <!-- Header -->
   <header>
@@ -255,48 +284,46 @@
       </div>
       <div class="brand-title">Med<span>Master</span></div>
     </div>
-    <div id="authBtn" class="user-pill" onclick="signInPrompt()">Doctor Login</div>
+    <div id="authBtn" class="user-pill" onclick="doctorLogin()">Doctor Login</div>
   </header>
 
-  <!-- 1. CHECKLIST SCREEN (DEFAULT) -->
+  <!-- 1. CHECKLIST SCREEN (5 REVISION CYCLES) -->
   <main id="view-checklist" class="view-content active">
-    <div class="overall-stats-card">
-      <div class="stat-text">
-        <h3 id="overallPercentage">0% Prepared</h3>
-        <p><span id="totalCheckedCount">0</span> of <span id="totalTopicCount">0</span> High-Yield Topics Done</p>
+    <div class="grand-stats-card">
+      <div class="grand-stats-header">
+        <div>
+          <h3 id="overallMasteryPct">0% Mastered</h3>
+          <p><span id="totalRevsLogged">0</span> of <span id="maxRevsTarget">0</span> Total Revisions Completed</p>
+        </div>
       </div>
-      <div class="circle-stat" id="statRing">
-        <span id="circleStatVal">0%</span>
+      <!-- Real-time 5 Cycles Tracker -->
+      <div class="cycles-legend">
+        <div><div class="cycle-tag-badge">R1</div><div class="cycle-tag-count" id="countR1">0</div></div>
+        <div><div class="cycle-tag-badge">R2</div><div class="cycle-tag-count" id="countR2">0</div></div>
+        <div><div class="cycle-tag-badge">R3</div><div class="cycle-tag-count" id="countR3">0</div></div>
+        <div><div class="cycle-tag-badge">R4</div><div class="cycle-tag-count" id="countR4">0</div></div>
+        <div><div class="cycle-tag-badge">R5</div><div class="cycle-tag-count" id="countR5" style="color:var(--accent-emerald);">0</div></div>
       </div>
     </div>
 
-    <!-- Subject Accordions Injected by JS -->
+    <!-- 19 Accordions -->
     <div id="subjectListContainer"></div>
   </main>
 
-  <!-- 2. FOCUS TIMER SCREEN -->
+  <!-- 2. FOCUS STUDY TIMER -->
   <section id="view-timer" class="view-content">
     <div class="timer-card">
       <div id="timerModeBadge" class="timer-badge-mode">
-        <span>⚡</span> Deep Study Block
+        <span>⚡</span> Deep Study Session
       </div>
 
-      <!-- Presets -->
       <div class="timer-chips-grid" style="margin-top: 18px;">
-        <button class="preset-pill active" onclick="setTimerDuration(25, this)">25m Focus</button>
-        <button class="preset-pill" onclick="setTimerDuration(50, this)">50m High-Yield</button>
-        <button class="preset-pill" onclick="setTimerDuration(90, this)">90m GT Block</button>
-        <button class="preset-pill" onclick="setTimerDuration(5, this)">5m Rest</button>
+        <button class="preset-pill active" onclick="setTimer(25, this)">25m Focus</button>
+        <button class="preset-pill" onclick="setTimer(50, this)">50m Deep Block</button>
+        <button class="preset-pill" onclick="setTimer(90, this)">90m GT Block</button>
+        <button class="preset-pill" onclick="setTimer(5, this)">5m Rest</button>
       </div>
 
-      <!-- Custom Input -->
-      <div class="custom-set-bar">
-        <span style="font-size: 0.82rem; color: var(--text-muted);">Custom:</span>
-        <input type="number" id="customInputMins" placeholder="Mins" min="1" max="180">
-        <button class="preset-pill" onclick="applyCustomMins()">Set</button>
-      </div>
-
-      <!-- Neon Ring -->
       <div class="timer-circle-wrap">
         <svg class="timer-circle-svg" viewBox="0 0 240 240">
           <defs>
@@ -311,14 +338,12 @@
         <div id="timerNumbers" class="time-digits-display">25:00</div>
       </div>
 
-      <!-- Control Buttons -->
       <div class="timer-btn-row">
         <button id="togglePlayBtn" class="btn-main-action" onclick="toggleTimer()">Start Session</button>
         <button class="btn-sub-action" onclick="resetTimer()">Reset</button>
       </div>
 
-      <!-- Daily Session Metrics -->
-      <div style="display:flex; justify-content:space-around; margin-top: 26px; border-top:1px solid var(--border); padding-top:18px;">
+      <div style="display:flex; justify-content:space-around; margin-top: 26px; border-top:1px solid rgba(255,255,255,0.06); padding-top:18px;">
         <div>
           <div style="font-size:1.3rem; font-weight:800; color:#fff;" id="metricSessions">0</div>
           <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-muted);">Completed</div>
@@ -334,7 +359,7 @@
   <!-- 3. FLASHCARDS SCREEN -->
   <section id="view-cards" class="view-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 style="font-size:1.15rem; font-weight:800;">High-Yield Spaced Cards</h2>
+      <h2 style="font-size:1.15rem; font-weight:800;">High-Yield Clinical Cards</h2>
       <span style="font-size:0.8rem; color:var(--text-muted);" id="cardCounter">1 / 10</span>
     </div>
 
@@ -342,22 +367,22 @@
       <div class="flashcard-inner-box">
         <div class="card-face">
           <span class="card-subject-tag" id="cardSubjectBadge">Pharmacology</span>
-          <div class="card-content-text" id="cardFront">Tap to flip</div>
+          <div class="card-content-text" id="cardFront">Loading...</div>
         </div>
         <div class="card-face card-face-back">
-          <span class="card-subject-tag" style="color:var(--accent-emerald); background:rgba(16,185,129,0.1); border-color:rgba(16,185,129,0.25);">High-Yield Answer</span>
-          <div class="card-content-text" id="cardBack">Answer details</div>
+          <span class="card-subject-tag" style="color:var(--accent-emerald); background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3);">High-Yield Answer</span>
+          <div class="card-content-text" id="cardBack">Loading...</div>
         </div>
       </div>
     </div>
 
     <div style="display:flex; gap:12px;">
-      <button class="btn-sub-action" onclick="prevFlashcard()">← Previous</button>
-      <button class="btn-main-action" onclick="nextFlashcard()">Next Card →</button>
+      <button class="btn-sub-action" onclick="prevCard()">← Previous</button>
+      <button class="btn-main-action" onclick="nextCard()">Next Card →</button>
     </div>
   </section>
 
-  <!-- Navigation Bar -->
+  <!-- Bottom Navigation -->
   <nav class="nav-bar-container">
     <button class="nav-tab-item active" onclick="navigate('view-checklist', this)">
       <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -620,7 +645,7 @@
       }
     ];
 
-    // --- FLASHCARDS DATASET ---
+    // --- FLASHCARDS ---
     const CARDS = [
       { s: "Pharmacology", f: "What is the specific drug of choice for Paracetamol poisoning within 8 hours of ingestion?", b: "N-acetylcysteine (NAC) - replenishes hepatocellular glutathione stores to neutralize toxic NAPQI." },
       { s: "Pathology", f: "What cytogenetic abnormality and translocation is classic for Burkitt Lymphoma?", b: "t(8;14) translocation, causing dysregulated overexpression of the c-myc oncogene." },
@@ -634,26 +659,16 @@
       { s: "Forensic Medicine", f: "Cherry-red postmortem hypostasis (livor mortis) is diagnostic of what toxic exposure?", b: "Carbon Monoxide (CO) poisoning, due to circulating carboxyhemoglobin." }
     ];
 
-    // --- ACCORDION CHECKLIST ENGINE ---
+    // --- 5 REVISION CYCLES ENGINE ---
     let totalTopics = 0;
-    let checkedTopics = 0;
 
-    function initChecklist() {
+    function renderChecklist() {
       const container = document.getElementById('subjectListContainer');
       container.innerHTML = '';
       totalTopics = 0;
-      checkedTopics = 0;
 
       SUBJECT_DATA.forEach((subject, sIdx) => {
         totalTopics += subject.topics.length;
-        
-        let subChecked = 0;
-        subject.topics.forEach((_, tIdx) => {
-          if (localStorage.getItem(`med_v2_t_${sIdx}_${tIdx}`) === '1') subChecked++;
-        });
-        checkedTopics += subChecked;
-
-        const subPercent = Math.round((subChecked / subject.topics.length) * 100);
 
         const card = document.createElement('div');
         card.className = 'subject-accordion';
@@ -664,79 +679,103 @@
               <div class="sub-icon">${subject.icon}</div>
               <div>
                 <div class="sub-text-title">${subject.name}</div>
-                <div class="sub-text-count" id="subCountText_${sIdx}">${subChecked} / ${subject.topics.length} Done (${subPercent}%)</div>
+                <div class="sub-text-count" id="subCountText_${sIdx}">0 / ${subject.topics.length * 5} Revs (0%)</div>
               </div>
             </div>
             <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
           <div class="sub-progress-bar-wrap">
-            <div class="sub-progress-bar-fill" id="subBar_${sIdx}" style="width: ${subPercent}%"></div>
+            <div class="sub-progress-bar-fill" id="subBar_${sIdx}"></div>
           </div>
           <div class="topic-list-drawer">
-            ${subject.topics.map((top, tIdx) => {
-              const isChecked = localStorage.getItem(`med_v2_t_${sIdx}_${tIdx}`) === '1';
-              return `
-                <div class="topic-item-row ${isChecked ? 'checked-row' : ''}" id="row_${sIdx}_${tIdx}" onclick="toggleTopic(${sIdx}, ${tIdx})">
-                  <div class="topic-checkbox ${isChecked ? 'checked' : ''}" id="check_${sIdx}_${tIdx}">
-                    <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                  </div>
-                  <span class="topic-name">${top}</span>
+            ${subject.topics.map((top, tIdx) => `
+              <div class="topic-row">
+                <div class="topic-title-bar">${top}</div>
+                <div class="revision-pills-row">
+                  ${[1, 2, 3, 4, 5].map(r => {
+                    const isDone = localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1';
+                    return `
+                      <button class="rev-pill ${isDone ? (r === 5 ? 'done r5-done' : 'done') : ''}" 
+                              id="pill_${sIdx}_${tIdx}_${r}" 
+                              onclick="toggleRevision(${sIdx}, ${tIdx}, ${r})">
+                        R${r}
+                      </button>
+                    `;
+                  }).join('')}
                 </div>
-              `;
-            }).join('')}
+              </div>
+            `).join('')}
           </div>
         `;
         container.appendChild(card);
+        updateSubjectStats(sIdx);
       });
 
-      refreshTopMetrics();
+      refreshGlobalStats();
     }
 
     function toggleAccordion(sIdx) {
       document.getElementById(`subCard_${sIdx}`).classList.toggle('open');
     }
 
-    function toggleTopic(sIdx, tIdx) {
-      const key = `med_v2_t_${sIdx}_${tIdx}`;
+    function toggleRevision(sIdx, tIdx, r) {
+      const key = `rev_s${sIdx}_t${tIdx}_r${r}`;
       const currentState = localStorage.getItem(key) === '1';
       const newState = !currentState;
-
       localStorage.setItem(key, newState ? '1' : '0');
 
-      const checkEl = document.getElementById(`check_${sIdx}_${tIdx}`);
-      const rowEl = document.getElementById(`row_${sIdx}_${tIdx}`);
+      const pill = document.getElementById(`pill_${sIdx}_${tIdx}_${r}`);
       if (newState) {
-        checkEl.classList.add('checked');
-        rowEl.classList.add('checked-row');
-        checkedTopics++;
+        pill.classList.add('done');
+        if (r === 5) pill.classList.add('r5-done');
       } else {
-        checkEl.classList.remove('checked');
-        rowEl.classList.remove('checked-row');
-        checkedTopics--;
+        pill.classList.remove('done', 'r5-done');
       }
 
-      // Update subject bar
-      let subDone = 0;
-      SUBJECT_DATA[sIdx].topics.forEach((_, i) => {
-        if (localStorage.getItem(`med_v2_t_${sIdx}_${i}`) === '1') subDone++;
+      updateSubjectStats(sIdx);
+      refreshGlobalStats();
+    }
+
+    function updateSubjectStats(sIdx) {
+      const totalPossible = SUBJECT_DATA[sIdx].topics.length * 5;
+      let completedRevs = 0;
+      SUBJECT_DATA[sIdx].topics.forEach((_, tIdx) => {
+        for (let r = 1; r <= 5; r++) {
+          if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') completedRevs++;
+        }
       });
-      const pct = Math.round((subDone / SUBJECT_DATA[sIdx].topics.length) * 100);
+      const pct = Math.round((completedRevs / totalPossible) * 100);
       document.getElementById(`subBar_${sIdx}`).style.width = `${pct}%`;
-      document.getElementById(`subCountText_${sIdx}`).textContent = `${subDone} / ${SUBJECT_DATA[sIdx].topics.length} Done (${pct}%)`;
-
-      refreshTopMetrics();
+      document.getElementById(`subCountText_${sIdx}`).textContent = `${completedRevs} / ${totalPossible} Revs (${pct}%)`;
     }
 
-    function refreshTopMetrics() {
-      document.getElementById('totalCheckedCount').textContent = checkedTopics;
-      document.getElementById('totalTopicCount').textContent = totalTopics;
-      const overall = totalTopics > 0 ? Math.round((checkedTopics / totalTopics) * 100) : 0;
-      document.getElementById('overallPercentage').textContent = `${overall}% Completed`;
-      document.getElementById('circleStatVal').textContent = `${overall}%`;
-      document.getElementById('statRing').style.background = `conic-gradient(var(--accent-cyan) ${overall * 3.6}deg, rgba(255,255,255,0.06) 0deg)`;
+    function refreshGlobalStats() {
+      const maxRevisions = totalTopics * 5;
+      let totalRevs = 0;
+      let countR = [0, 0, 0, 0, 0];
+
+      SUBJECT_DATA.forEach((s, sIdx) => {
+        s.topics.forEach((_, tIdx) => {
+          for (let r = 1; r <= 5; r++) {
+            if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') {
+              totalRevs++;
+              countR[r - 1]++;
+            }
+          }
+        });
+      });
+
+      document.getElementById('totalRevsLogged').textContent = totalRevs;
+      document.getElementById('maxRevsTarget').textContent = maxRevisions;
+      const masteryPct = maxRevisions > 0 ? Math.round((totalRevs / maxRevisions) * 100) : 0;
+      document.getElementById('overallMasteryPct').textContent = `${masteryPct}% Mastered`;
+
+      for (let r = 1; r <= 5; r++) {
+        document.getElementById(`countR${r}`).textContent = countR[r - 1];
+      }
     }
 
-    // --- FOCUS TIMER ENGINE ---
+    // --- FOCUS STUDY TIMER ---
     let timerDuration = 25 * 60;
     let timerLeft = 25 * 60;
     let timerId = null;
@@ -745,7 +784,7 @@
     let totalStudiedSecs = 0;
     const ringCircumference = 2 * Math.PI * 110;
 
-    function renderTimerUI() {
+    function renderTimer() {
       const m = Math.floor(timerLeft / 60);
       const s = timerLeft % 60;
       document.getElementById('timerNumbers').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
@@ -759,7 +798,7 @@
         clearInterval(timerId);
         isTimerActive = false;
         playBtn.textContent = 'Resume Session';
-        playBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
+        playBtn.style.background = 'linear-gradient(135deg, #0284c7, #06b6d4)';
       } else {
         isTimerActive = true;
         playBtn.textContent = 'Pause Focus';
@@ -768,14 +807,13 @@
           if (timerLeft > 0) {
             timerLeft--;
             totalStudiedSecs++;
-            renderTimerUI();
+            renderTimer();
             updateTimerStats();
           } else {
             clearInterval(timerId);
             isTimerActive = false;
             completedSessions++;
-            ringBell();
-            alert('Study block finished! Great focus doctor.');
+            alert('🎉 Session complete! Time for a brief break or flashcard review.');
             resetTimer();
           }
         }, 1000);
@@ -788,48 +826,23 @@
       timerLeft = timerDuration;
       const playBtn = document.getElementById('togglePlayBtn');
       playBtn.textContent = 'Start Session';
-      playBtn.style.background = 'linear-gradient(135deg, #0284c7, #0369a1)';
-      renderTimerUI();
+      playBtn.style.background = 'linear-gradient(135deg, #0284c7, #06b6d4)';
+      renderTimer();
     }
 
-    function setTimerDuration(mins, btn) {
+    function setTimer(mins, btn) {
       document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
       if (btn) btn.classList.add('active');
       timerDuration = mins * 60;
       timerLeft = timerDuration;
-      document.getElementById('timerModeBadge').innerHTML = mins <= 10 ? '<span>☕</span> Rest & Reset' : '<span>⚡</span> Deep Study Block';
+      document.getElementById('timerModeBadge').innerHTML = mins <= 10 ? '<span>☕</span> Rest & Reset' : '<span>⚡</span> Deep Study Session';
       resetTimer();
-    }
-
-    function applyCustomMins() {
-      const input = document.getElementById('customInputMins');
-      const val = parseInt(input.value, 10);
-      if (val && val > 0 && val <= 180) {
-        setTimerDuration(val, null);
-      }
     }
 
     function updateTimerStats() {
       document.getElementById('metricSessions').textContent = completedSessions;
       const m = Math.floor(totalStudiedSecs / 60);
       document.getElementById('metricMinutes').textContent = `${m}m`;
-    }
-
-    function ringBell() {
-      try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.15);
-        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.3);
-        gain.gain.setValueAtTime(0.35, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
-        osc.start();
-        osc.stop(ctx.currentTime + 1.2);
-      } catch (e) {}
     }
 
     // --- FLASHCARD ENGINE ---
@@ -842,15 +855,8 @@
       document.getElementById('cardCounter').textContent = `${curCard + 1} / ${CARDS.length}`;
     }
 
-    function nextFlashcard() {
-      curCard = (curCard + 1) % CARDS.length;
-      renderFlashcard();
-    }
-
-    function prevFlashcard() {
-      curCard = (curCard - 1 + CARDS.length) % CARDS.length;
-      renderFlashcard();
-    }
+    function nextCard() { curCard = (curCard + 1) % CARDS.length; renderFlashcard(); }
+    function prevCard() { curCard = (curCard - 1 + CARDS.length) % CARDS.length; renderFlashcard(); }
 
     // --- NAVIGATION ---
     function navigate(viewId, btn) {
@@ -861,18 +867,18 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function signInPrompt() {
-      const email = prompt("Enter your personal email to register or log into MedMaster:");
+    function doctorLogin() {
+      const email = prompt("Enter student email to sync your revision cycles:");
       if (email && email.includes('@')) {
         document.getElementById('authBtn').textContent = "Dr. " + email.split('@')[0];
-        alert("Logged in as " + email + ". Your subject checkpoints and focus hours are saved to your profile.");
+        alert("Logged in as " + email + ". Your 5-cycle revisions are safely saved to your profile.");
       }
     }
 
-    // --- INIT ---
+    // --- INITIALIZE ---
     window.addEventListener('DOMContentLoaded', () => {
-      initChecklist();
-      renderTimerUI();
+      renderChecklist();
+      renderTimer();
       renderFlashcard();
     });
   </script>
