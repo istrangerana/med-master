@@ -466,7 +466,7 @@
     </div>
   </section>
 
-  <!-- TAB 4: FOCUS STUDY TIMER WITH INTEGRATED ONLINE MUSIC -->
+  <!-- TAB 4: FOCUS STUDY TIMER WITH RELIABLE ONLINE AMBIENT STREAM -->
   <section id="view-timer" class="view-content">
     <div class="timer-card">
       <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
@@ -544,18 +544,17 @@
   </nav>
 
   <script>
-    // --- ONLINE AMBIENT MUSIC ENGINE ---
+    // --- RELIABLE 24/7 ONLINE AMBIENT STREAMS ---
     const onlineAudioPlayer = new Audio();
     onlineAudioPlayer.loop = true;
-    onlineAudioPlayer.crossOrigin = "anonymous";
     onlineAudioPlayer.preload = "none";
 
     const STREAM_SOURCES = {
       none: null,
-      // 24/7 Live Stream Streams & Direct Ambient CDNs
-      lofi: "https://streams.ilovemusic.de/iloveradio17.mp3", // Smooth Lo-Fi Chill Beats
-      alpha: "https://ia801503.us.archive.org/15/items/BinauralBeatsAlphaWavesStudyFocus/Alpha_Waves_10Hz_Focus.mp3", // Alpha Wave Concentration
-      rain: "https://ia800301.us.archive.org/15/items/Sound_Effects_Animal_Sounds_Rain_Forest_and_Ocean_Sound_Effects/Rain_and_Thunder.mp3" // Rain & White Noise
+      // Continuous 24/7 HTTPS Live Audio Streams with verified cross-origin support
+      lofi: "https://streams.ilovemusic.de/iloveradio17.mp3",
+      alpha: "https://ice1.somafm.com/dronezone-128-mp3",
+      rain: "https://stream.zeno.fm/c3m5xhr7azzuv"
     };
 
     let activeMusicChannel = 'none';
@@ -570,14 +569,18 @@
         onlineAudioPlayer.src = "";
         updateMusicUI(false, "Muted");
       } else {
-        onlineAudioPlayer.src = STREAM_SOURCES[channelKey];
+        const streamUrl = STREAM_SOURCES[channelKey];
+        if (onlineAudioPlayer.src !== streamUrl) {
+          onlineAudioPlayer.src = streamUrl;
+        }
         onlineAudioPlayer.volume = parseFloat(document.getElementById('musicVolSlider').value);
+
         if (isTimerActive) {
           onlineAudioPlayer.play().then(() => {
             updateMusicUI(true, "Playing " + channelKey.toUpperCase());
           }).catch(err => {
-            console.warn("Audio autoplay blocked or network delay:", err);
-            updateMusicUI(false, "Click Play");
+            console.warn("Playback requires user trigger or buffering:", err);
+            updateMusicUI(false, "Tap to Play");
           });
         } else {
           updateMusicUI(false, "Ready (" + channelKey.toUpperCase() + ")");
@@ -1184,7 +1187,7 @@ Return strictly a valid JSON array of objects with this schema:
       }
     }
 
-    // --- INIT ---
+    // --- INITIALIZATION ---
     window.addEventListener('DOMContentLoaded', () => {
       renderChecklist();
       renderFlashcard();
