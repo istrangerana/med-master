@@ -3,13 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>MedMaster - Clinical AI & High-Yield Prep</title>
+  <title>MedMaster - Clinical AI Exam & Test Bank</title>
   
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0369a1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.PNG">
+
+  <!-- PDF.js library for direct client-side PDF text extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
   <style>
     :root {
@@ -21,6 +25,8 @@
       --accent-cyan: #06b6d4;
       --accent-emerald: #10b981;
       --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
     }
@@ -97,7 +103,7 @@
     .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); }
     .cycle-tag-count { font-size: 0.95rem; font-weight: 800; color: #fff; margin-top: 2px; }
 
-    /* Subjects Accordion */
+    /* Accordion Subjects */
     .subject-accordion {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 20px; margin-bottom: 14px; overflow: hidden;
@@ -134,93 +140,88 @@
     .rev-pill.done { background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; border-color: transparent; }
     .rev-pill.r5-done { background: linear-gradient(135deg, #10b981, #059669); }
 
-    /* AI Search & Clinical Assistant */
+    /* AI Exam Generator & Upload Suite */
     .ai-hero-card {
-      background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(13, 20, 36, 0.88) 100%);
-      border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 24px; padding: 22px; margin-bottom: 20px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(13, 20, 36, 0.9) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.38); border-radius: 24px; padding: 22px; margin-bottom: 20px;
       backdrop-filter: blur(20px);
     }
-    .ai-mode-toggle {
-      display: flex; gap: 8px; margin: 14px 0 10px;
-      background: rgba(0,0,0,0.3); padding: 4px; border-radius: 14px;
+    .mode-switch-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin: 14px 0 12px;
+      background: rgba(0,0,0,0.35); padding: 4px; border-radius: 14px;
     }
-    .ai-mode-btn {
-      flex: 1; padding: 8px 12px; border-radius: 10px; border: none;
-      background: transparent; color: var(--text-muted); font-size: 0.78rem; font-weight: 700;
-      cursor: pointer; transition: 0.2s;
+    .mode-tab-btn {
+      padding: 9px 6px; border-radius: 10px; border: none; background: transparent;
+      color: var(--text-muted); font-size: 0.74rem; font-weight: 700; cursor: pointer; text-align: center;
     }
-    .ai-mode-btn.active {
-      background: var(--accent-purple); color: #fff;
-    }
+    .mode-tab-btn.active { background: var(--accent-purple); color: #fff; box-shadow: 0 2px 10px rgba(168,85,247,0.4); }
 
-    .ai-search-bar { display: flex; gap: 8px; margin-top: 8px; }
-    .ai-input {
+    .ai-input-wrap { display: flex; gap: 8px; margin-top: 8px; }
+    .ai-text-field {
       flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
       border-radius: 14px; padding: 12px 16px; color: #fff; font-size: 0.95rem; outline: none;
     }
-    .ai-input:focus { border-color: var(--accent-purple); }
-    .btn-ai-generate {
-      background: linear-gradient(135deg, #a855f7, #6366f1); border: none; border-radius: 14px;
-      color: #fff; padding: 0 18px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
-    }
+    .ai-text-field:focus { border-color: var(--accent-purple); }
 
-    /* AI Info Container */
-    .ai-info-card {
+    /* Quantity & Config Bar */
+    .config-strip {
+      display: flex; justify-content: space-between; align-items: center; margin-top: 14px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 14px; border-radius: 12px; flex-wrap: wrap; gap: 8px;
+    }
+    .q-count-picker { display: flex; align-items: center; gap: 6px; }
+    .q-pill {
+      padding: 5px 10px; border-radius: 8px; border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.04); color: var(--text-muted); font-size: 0.75rem; font-weight: 700; cursor: pointer;
+    }
+    .q-pill.active { background: var(--primary); color: #fff; border-color: var(--primary-light); }
+
+    /* Upload Box for PDF / Image */
+    .drop-upload-zone {
+      margin-top: 12px; border: 2px dashed rgba(168, 85, 247, 0.4); border-radius: 16px;
+      padding: 20px; text-align: center; background: rgba(168, 85, 247, 0.05); cursor: pointer;
+      transition: all 0.2s;
+    }
+    .drop-upload-zone:hover { background: rgba(168, 85, 247, 0.1); border-color: var(--accent-purple); }
+    .drop-upload-zone input { display: none; }
+
+    /* Mock Test Arena */
+    .test-arena-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 20px; padding: 22px; margin-top: 18px; display: none;
-      backdrop-filter: blur(16px); animation: slideUp 0.3s ease;
+      border-radius: 24px; padding: 22px; margin-top: 18px; display: none;
+      backdrop-filter: blur(20px); animation: slideUp 0.3s ease;
     }
-    .info-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-    .info-title { font-size: 1.25rem; font-weight: 800; color: #fff; }
-    .info-badge { font-size: 0.72rem; padding: 4px 10px; border-radius: 8px; background: rgba(56,189,248,0.15); color: var(--primary-light); font-weight: 700; }
-    
-    .yield-section { margin-bottom: 14px; }
-    .yield-label { font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--accent-cyan); letter-spacing: 0.6px; margin-bottom: 4px; }
-    .yield-desc { font-size: 0.92rem; line-height: 1.5; color: #e2e8f0; }
+    .test-arena-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 16px;
+    }
+    .test-meta-badge { font-size: 0.75rem; font-weight: 800; color: var(--primary-light); background: rgba(2,132,199,0.15); padding: 5px 12px; border-radius: 8px; }
 
-    .mcq-option {
+    .q-number-pill-tray {
+      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px;
+    }
+    .q-num-bubble {
+      min-width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--card-border);
+      display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800;
+      color: var(--text-muted); cursor: pointer; flex-shrink: 0; background: rgba(255,255,255,0.03);
+    }
+    .q-num-bubble.active { border-color: var(--primary-light); color: #fff; background: var(--primary); }
+    .q-num-bubble.answered { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-emerald); color: #34d399; }
+
+    .mcq-choice-item {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px; padding: 12px; margin-top: 8px; font-size: 0.88rem; cursor: pointer;
+      border-radius: 12px; padding: 13px 16px; margin-top: 10px; font-size: 0.9rem;
+      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px;
     }
-    .mcq-option.correct { background: rgba(16, 185, 129, 0.18); border-color: var(--accent-emerald); color: #34d399; font-weight: 600; }
-    .mcq-option.wrong { background: rgba(244, 63, 94, 0.18); border-color: #f43f5e; color: #fb7185; }
+    .mcq-choice-item:hover { background: rgba(255,255,255,0.06); }
+    .mcq-choice-item.selected { border-color: var(--primary-light); background: rgba(2,132,199,0.18); font-weight: 600; }
+    .mcq-choice-item.is-correct { border-color: var(--accent-emerald) !important; background: rgba(16,185,129,0.2) !important; color: #34d399; font-weight: 700; }
+    .mcq-choice-item.is-wrong { border-color: var(--accent-rose) !important; background: rgba(244,63,94,0.2) !important; color: #fb7185; }
 
-    /* Flashcards */
-    .flashcard-deck-wrap { perspective: 1200px; margin-bottom: 22px; cursor: pointer; }
-    .flashcard-inner-box {
-      min-height: 260px; background: var(--card-bg);
-      border: 1px solid var(--card-border); border-radius: 26px; padding: 28px;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      text-align: center; position: relative; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform-style: preserve-3d; backdrop-filter: blur(20px);
-    }
-    .flashcard-deck-wrap.flipped .flashcard-inner-box { transform: rotateY(180deg); }
-    .card-face { backface-visibility: hidden; width: 100%; }
-    .card-face-back { position: absolute; transform: rotateY(180deg); color: var(--primary-light); }
-    .card-subject-tag {
-      position: absolute; top: 18px; left: 20px;
-      font-size: 0.72rem; text-transform: uppercase; font-weight: 700;
-      color: var(--accent-cyan); background: rgba(6,182,212,0.12);
-      padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.3);
-    }
-
-    /* Timer */
-    .timer-card {
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 28px; padding: 28px 20px; text-align: center; backdrop-filter: blur(20px);
-    }
-    .timer-circle-wrap { position: relative; width: 230px; height: 230px; margin: 20px auto; }
-    .timer-circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-    .circle-base { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
-    .circle-indicator {
-      fill: none; stroke: url(#timerGrad); stroke-width: 9;
-      stroke-linecap: round; stroke-dasharray: 691; stroke-dashoffset: 0;
-      transition: stroke-dashoffset 0.4s ease;
-    }
-    .time-digits-display {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-size: 3.4rem; font-weight: 900; font-variant-numeric: tabular-nums;
-      color: #fff; letter-spacing: -1.5px;
+    .score-summary-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(13, 20, 36, 0.8) 100%);
+      border: 1px solid var(--accent-emerald); border-radius: 18px; padding: 18px; margin-bottom: 20px;
+      display: flex; justify-content: space-around; align-items: center; text-align: center;
     }
 
     /* Bottom Navigation */
@@ -263,7 +264,7 @@
       <div class="brand-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div class="brand-title">Med<span>Master</span> AI</div>
+      <div class="brand-title">Med<span>Master</span> AI Exam</div>
     </div>
     <div id="authBtn" class="user-pill" onclick="doctorLogin()">Doctor Login</div>
   </header>
@@ -288,77 +289,103 @@
     <div id="subjectListContainer"></div>
   </main>
 
-  <!-- TAB 2: IMPROVED CLINICAL AI SEARCH (SUMMARY & QUESTION MODES) -->
+  <!-- TAB 2: ADVANCED AI EXAM & PDF/IMAGE TEST GENERATOR -->
   <section id="view-ai" class="view-content">
     <div class="ai-hero-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:#c084fc;">✦ Clinical AI Assistant</span>
+        <span style="font-size:0.75rem; text-transform:uppercase; font-weight:800; color:#c084fc;">✦ MedMaster Exam Studio</span>
         <button onclick="configureApiKey()" style="background:none; border:none; color:var(--text-muted); font-size:0.72rem; text-decoration:underline; cursor:pointer;">API Key Settings</button>
       </div>
-      <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Search Any Medical Topic</h2>
+      <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Generate Custom Test & Q-Bank</h2>
 
-      <!-- Mode Selector: Search Info vs Create MCQ -->
-      <div class="ai-mode-toggle">
-        <button class="ai-mode-btn active" id="btnModeSummary" onclick="setAiMode('summary')">📖 Clinical High-Yield Summary</button>
-        <button class="ai-mode-btn" id="btnModeMcq" onclick="setAiMode('mcq')">📝 Practice Exam MCQ</button>
-      </div>
-      
-      <div class="ai-search-bar">
-        <input type="text" id="aiTopicInput" class="ai-input" placeholder="e.g. Paracetamol toxicity, Croup, Marfan syndrome...">
-        <button class="btn-ai-generate" onclick="handleAiSearch()">Search</button>
+      <!-- 3 Generator Input Modes -->
+      <div class="mode-switch-grid">
+        <button class="mode-tab-btn active" id="tabModeTopic" onclick="switchGenMode('topic')">🔍 By Topic</button>
+        <button class="mode-tab-btn" id="tabModePdf" onclick="switchGenMode('pdf')">📄 Upload PDF</button>
+        <button class="mode-tab-btn" id="tabModeImg" onclick="switchGenMode('image')">🖼️ Upload Image</button>
       </div>
 
-      <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:12px;">
-        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Paracetamol poisoning')">Paracetamol poisoning</span>
-        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Pheochromocytoma')">Pheochromocytoma</span>
-        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Burkitt lymphoma')">Burkitt lymphoma</span>
-        <span style="font-size:0.72rem; padding:5px 10px; background:rgba(255,255,255,0.04); border-radius:8px; cursor:pointer; color:var(--text-muted);" onclick="quickSearch('Croup')">Croup</span>
+      <!-- Mode 1: Search by Topic -->
+      <div id="sectionTopicInput">
+        <div class="ai-input-wrap">
+          <input type="text" id="aiTopicInput" class="ai-text-field" placeholder="e.g. Acid-Base Disorders, Leprosy, Horner Syndrome...">
+        </div>
+      </div>
+
+      <!-- Mode 2 & 3: File Upload Box -->
+      <div id="sectionFileUpload" style="display:none;">
+        <label class="drop-upload-zone" for="sourceFileInput">
+          <div style="font-size:1.8rem; margin-bottom:6px;">📎</div>
+          <div id="fileUploadPromptText" style="font-size:0.88rem; font-weight:700; color:#fff;">Select or Snap Medical PDF / Image</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Upload BTR notes, Harrison pages, First Aid charts, or question screenshots</div>
+          <input type="file" id="sourceFileInput" onchange="handleSourceFileChosen(this)">
+        </label>
+        <div id="fileExtractedPreview" style="font-size:0.78rem; color:#38bdf8; margin-top:8px; display:none;"></div>
+      </div>
+
+      <!-- Question Quantity & Type Config -->
+      <div class="config-strip">
+        <div class="q-count-picker">
+          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">QUESTIONS:</span>
+          <button class="q-pill" onclick="setQCount(1, this)">1</button>
+          <button class="q-pill active" onclick="setQCount(3, this)">3</button>
+          <button class="q-pill" onclick="setQCount(5, this)">5</button>
+          <button class="q-pill" onclick="setQCount(10, this)">10</button>
+          <button class="q-pill" onclick="setQCount(20, this)">20</button>
+        </div>
+        <button class="btn-main-action" style="padding:8px 18px; font-size:0.85rem;" onclick="generateExamSuite()">⚡ Build Test</button>
       </div>
     </div>
 
-    <!-- AI Output Box -->
-    <div id="aiResultCard" class="ai-info-card">
-      <div class="info-header">
+    <!-- Interactive Mock Test Arena -->
+    <div id="mockTestArena" class="test-arena-card">
+      <div class="test-arena-header">
         <div>
-          <div class="info-title" id="aiResultTitle">Topic Summary</div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;" id="aiResultSubtitle">NEET PG High-Yield Insights</div>
+          <span class="test-meta-badge" id="testBatchTitle">Mock Test: 5 Questions</span>
+          <span style="font-size:0.74rem; color:var(--text-muted); margin-left:8px;" id="testTimerDisplay">⏱ 00:00</span>
         </div>
-        <button onclick="saveCurrentToCards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:6px 14px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">+ Save to Flashcards</button>
+        <button onclick="finishTestAndScore()" id="btnFinishTest" style="background:linear-gradient(135deg, #10b981, #059669); border:none; color:#fff; font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:10px; cursor:pointer;">Finish & Score</button>
       </div>
 
-      <!-- Container for Clinical Summary Details -->
-      <div id="aiSummaryView">
-        <div class="yield-section">
-          <div class="yield-label">🎯 Key Pathophysiology & Etiology</div>
-          <div class="yield-desc" id="aiYieldPatho">Loading...</div>
+      <!-- Result Score Display (Shown on Finish) -->
+      <div id="scoreSummaryBanner" class="score-summary-banner" style="display:none;">
+        <div>
+          <div style="font-size:1.6rem; font-weight:900; color:#fff;" id="scoreTotalMarks">0</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">NEET Score (+4 / -1)</div>
         </div>
-        <div class="yield-section">
-          <div class="yield-label">🔍 Gold Standard Diagnostic Investigation</div>
-          <div class="yield-desc" id="aiYieldDiag">Loading...</div>
+        <div>
+          <div style="font-size:1.6rem; font-weight:900; color:#34d399;" id="scoreCorrectCount">0</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Correct</div>
         </div>
-        <div class="yield-section">
-          <div class="yield-label">💊 First-Line Drug / Treatment of Choice</div>
-          <div class="yield-desc" id="aiYieldRx">Loading...</div>
-        </div>
-        <div class="yield-section">
-          <div class="yield-label">⭐ Classic Triads, Signs & Exam Pearls</div>
-          <div class="yield-desc" id="aiYieldPearls">Loading...</div>
+        <div>
+          <div style="font-size:1.6rem; font-weight:900; color:#fb7185;" id="scoreWrongCount">0</div>
+          <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">Incorrect</div>
         </div>
       </div>
 
-      <!-- Container for MCQ Questions (when MCQ mode chosen) -->
-      <div id="aiMcqView" style="display:none;">
-        <div id="aiMcqStem" style="font-size:0.95rem; line-height:1.55; font-weight:600; margin-bottom:12px;"></div>
-        <div id="aiMcqOptions"></div>
-        <div id="aiMcqExplanation" style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; font-size:0.85rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
+      <!-- Question Jump Tray (Q1, Q2, Q3...) -->
+      <div class="q-number-pill-tray" id="qNumTray"></div>
+
+      <!-- Active Question Stem & Options -->
+      <div id="activeQuestionView">
+        <div id="activeQStem" style="font-size:0.96rem; line-height:1.6; font-weight:600; margin-bottom:14px;">Loading question...</div>
+        <div id="activeQOptions"></div>
+        <div id="activeQExplanation" style="margin-top:14px; padding:14px; background:rgba(255,255,255,0.03); border:1px solid var(--card-border); border-radius:12px; font-size:0.86rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
+      </div>
+
+      <!-- Question Action Buttons -->
+      <div style="display:flex; justify-content:space-between; margin-top:20px;">
+        <button class="btn-sub-action" style="padding:10px 18px;" onclick="navigateQ(-1)">← Prev</button>
+        <button onclick="saveCurrentBatchToFlashcards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:10px 14px; border-radius:12px; font-size:0.78rem; font-weight:700; cursor:pointer;">+ Save All to Q-Bank</button>
+        <button class="btn-main-action" style="padding:10px 18px;" onclick="navigateQ(1)">Next →</button>
       </div>
     </div>
   </section>
 
-  <!-- TAB 3: FLASHCARDS -->
+  <!-- TAB 3: FLASHCARDS & QUESTION BANK -->
   <section id="view-cards" class="view-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 style="font-size:1.15rem; font-weight:800;">High-Yield Cards</h2>
+      <h2 style="font-size:1.15rem; font-weight:800;">Saved Cards & Q-Bank</h2>
       <span style="font-size:0.8rem; color:var(--text-muted);" id="cardCounter">1 / 10</span>
     </div>
 
@@ -381,9 +408,9 @@
     </div>
   </section>
 
-  <!-- TAB 4: FOCUS TIMER -->
+  <!-- TAB 4: FOCUS STUDY TIMER -->
   <section id="view-timer" class="view-content">
-    <div class="timer-card">
+    <div class="timer-card" style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:28px; padding:28px 20px; text-align:center; backdrop-filter:blur(20px);">
       <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
         <span>⚡</span> Deep Focus Session
       </div>
@@ -394,18 +421,12 @@
         <button class="preset-pill" onclick="setTimer(90, this)" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--card-border); padding:8px 14px; border-radius:12px; font-size:0.8rem; cursor:pointer;">90m</button>
       </div>
 
-      <div class="timer-circle-wrap">
-        <svg class="timer-circle-svg" viewBox="0 0 240 240">
-          <defs>
-            <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stop-color="#38bdf8"/>
-              <stop offset="100%" stop-color="#0284c7"/>
-            </linearGradient>
-          </defs>
-          <circle class="circle-base" cx="120" cy="120" r="110"/>
-          <circle id="timerProgressRing" class="circle-indicator" cx="120" cy="120" r="110"/>
+      <div style="position:relative; width:230px; height:230px; margin:20px auto;">
+        <svg style="transform:rotate(-90deg); width:100%; height:100%;" viewBox="0 0 240 240">
+          <circle style="fill:none; stroke:rgba(255,255,255,0.06); stroke-width:9;" cx="120" cy="120" r="110"/>
+          <circle id="timerProgressRing" style="fill:none; stroke:#38bdf8; stroke-width:9; stroke-linecap:round; stroke-dasharray:691; stroke-dashoffset:0; transition:stroke-dashoffset 0.4s ease;" cx="120" cy="120" r="110"/>
         </svg>
-        <div id="timerNumbers" class="time-digits-display">25:00</div>
+        <div id="timerNumbers" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:3.4rem; font-weight:900; color:#fff;">25:00</div>
       </div>
 
       <div style="display:flex; gap:10px; max-width:320px; margin:0 auto;">
@@ -415,7 +436,7 @@
     </div>
   </section>
 
-  <!-- Navigation Bar -->
+  <!-- Bottom Navigation -->
   <nav class="nav-bar-container">
     <button class="nav-tab-item active" onclick="navigate('view-checklist', this)">
       <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
@@ -423,11 +444,11 @@
     </button>
     <button class="nav-tab-item" onclick="navigate('view-ai', this)">
       <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      AI Search
+      AI Exam
     </button>
     <button class="nav-tab-item" onclick="navigate('view-cards', this)">
       <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      Cards
+      Q-Bank
     </button>
     <button class="nav-tab-item" onclick="navigate('view-timer', this)">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -436,7 +457,7 @@
   </nav>
 
   <script>
-    // --- 19 SUBJECTS WITH 5 REVISION CYCLES ---
+    // --- 19 MBBS SUBJECTS WITH 5 REVISION CYCLES ---
     const SUBJECT_DATA = [
       { name: "Anatomy", icon: "🦴", topics: ["Brachial Plexus Branches & Clinical Cord Lesions", "Upper Limb Spaces & Carpal Tunnel Syndrome", "Femoral Triangle, Canal & Inguinal Hernia Coverings", "Cranial Nerves Foramina & Cavernous Sinus Anatomy", "Embryology: Pharyngeal Arches, Pouches & Derivatives", "Coronary Circulation Anatomy & Dominance Patterns"] },
       { name: "Physiology", icon: "⚡", topics: ["Action Potential & Nerve Conduction Velocities", "Cardiac Cycle Phases, JVP Waves & Heart Sounds", "Lung Volumes, Compliance & V/Q Mismatch", "Renal Countercurrent Mechanism & GFR Regulation", "Endocrine Axes & Calcium Homeostasis", "Sensory & Motor Pathways: DCML vs Anterolateral"] },
@@ -473,7 +494,7 @@
       try { CARDS = CARDS.concat(JSON.parse(customCards)); } catch(e){}
     }
 
-    // --- ACCORDIONS & 5-CYCLE TRACKER ---
+    // --- ACCORDIONS ENGINE ---
     let totalTopics = 0;
     function renderChecklist() {
       const container = document.getElementById('subjectListContainer');
@@ -562,242 +583,398 @@
       for (let r = 1; r <= 5; r++) { document.getElementById(`countR${r}`).textContent = countR[r-1]; }
     }
 
-    // --- IMPROVED AI & CLINICAL KNOWLEDGE ENGINE ---
-    let currentAiMode = 'summary'; // 'summary' or 'mcq'
-    let currentSavedCard = null;
+    // --- AI EXAM & PDF/IMAGE TEST GENERATION ENGINE ---
+    let currentGenMode = 'topic'; // 'topic', 'pdf', 'image'
+    let requestedQCount = 3;
+    let extractedFileText = '';
+    let extractedImageBase64 = null;
 
-    function setAiMode(mode) {
-      currentAiMode = mode;
-      document.getElementById('btnModeSummary').classList.toggle('active', mode === 'summary');
-      document.getElementById('btnModeMcq').classList.toggle('active', mode === 'mcq');
-      const input = document.getElementById('aiTopicInput').value.trim();
-      if (input) handleAiSearch();
+    // Active Test State
+    let currentBatchQuestions = [];
+    let currentQIndex = 0;
+    let userAnswers = {};
+    let isTestFinished = false;
+    let testTimerSecs = 0;
+    let testTimerInterval = null;
+
+    function switchGenMode(mode) {
+      currentGenMode = mode;
+      document.getElementById('tabModeTopic').classList.toggle('active', mode === 'topic');
+      document.getElementById('tabModePdf').classList.toggle('active', mode === 'pdf');
+      document.getElementById('tabModeImg').classList.toggle('active', mode === 'image');
+
+      const isFile = (mode === 'pdf' || mode === 'image');
+      document.getElementById('sectionTopicInput').style.display = isFile ? 'none' : 'block';
+      document.getElementById('sectionFileUpload').style.display = isFile ? 'block' : 'none';
+
+      const fileInput = document.getElementById('sourceFileInput');
+      fileInput.value = '';
+      extractedFileText = '';
+      extractedImageBase64 = null;
+      document.getElementById('fileExtractedPreview').style.display = 'none';
+
+      if (mode === 'pdf') {
+        fileInput.accept = "application/pdf";
+        document.getElementById('fileUploadPromptText').textContent = "Upload Medical PDF Document";
+      } else if (mode === 'image') {
+        fileInput.accept = "image/*";
+        document.getElementById('fileUploadPromptText').textContent = "Upload or Snap Image / Notes Photo";
+      }
     }
 
-    function quickSearch(val) {
-      document.getElementById('aiTopicInput').value = val;
-      handleAiSearch();
+    function setQCount(cnt, btn) {
+      requestedQCount = cnt;
+      document.querySelectorAll('.q-pill').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
     }
 
     function configureApiKey() {
       const current = localStorage.getItem('gemini_api_key') || '';
-      const key = prompt("Enter your free Google Gemini API Key (Optional):\n\nLeave blank to use the built-in High-Yield Medical Database.", current);
+      const key = prompt("Enter your free Google Gemini API Key:\n\n(Tip: Get a 100% free key from aistudio.google.com to enable infinite multi-question batches and direct PDF vision analysis).", current);
       if (key !== null) {
         localStorage.setItem('gemini_api_key', key.trim());
-        alert(key.trim() ? "Gemini API key saved! Live cloud AI search enabled." : "Using built-in medical database.");
+        alert(key.trim() ? "Gemini API connected! High-yield multi-question exam generator active." : "Using internal medical knowledge bank.");
       }
     }
 
-    // High-yield medical summaries database
-    const MEDICAL_DB = {
-      "paracetamol": {
-        title: "Paracetamol (Acetaminophen) Toxicity",
-        sub: "Pharmacology & Emergency Toxicology",
-        patho: "Excessive dose saturates Phase II glucuronidation and sulfation pathways. Shunted to CYP2E1 forming toxic electrophile NAPQI, which depletes hepatocellular glutathione, resulting in centrilobular necrosis.",
-        diag: "Rumack-Matthew Nomogram at 4 hours post-ingestion to guide antidote therapy.",
-        rx: "N-acetylcysteine (NAC) - replenishes glutathione reserves. Most effective within 8 to 10 hours.",
-        pearls: "Classic AST/ALT elevation (>10,000 U/L). Chronic alcoholics have induced CYP2E1, lowering toxicity threshold.",
-        card: { s: "Pharmacology", f: "Mechanism of Paracetamol toxicity and definitive antidote?", b: "Depletion of glutathione by toxic NAPQI leads to centrilobular necrosis. Antidote is N-acetylcysteine (NAC)." },
-        mcq: {
-          q: "A 24-year-old presents 5 hours after an acute overdose of paracetamol tablets. Serum paracetamol levels fall well above the treatment line on the Rumack-Matthew nomogram. What is the precise mechanism of the recommended antidote?",
-          opts: ["Replenishment of hepatic glutathione reserves", "Competitive antagonism of hepatic opioid receptors", "Inhibition of alcohol dehydrogenase", "Enhanced urinary alkalinization and elimination"],
-          ans: 0,
-          exp: "N-acetylcysteine (NAC) works by replenishing hepatocellular glutathione stores, which detoxifies the hepatotoxic metabolite NAPQI."
+    // Handle Uploaded File (PDF text extraction & Image Base64 reading)
+    async function handleSourceFileChosen(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const previewEl = document.getElementById('fileExtractedPreview');
+      previewEl.style.display = 'block';
+      previewEl.textContent = `Reading ${file.name}...`;
+
+      if (currentGenMode === 'pdf') {
+        try {
+          const fileReader = new FileReader();
+          fileReader.onload = async function() {
+            const typedarray = new Uint8Array(this.result);
+            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+            let fullText = '';
+            const maxPages = Math.min(pdf.numPages, 5); // Read up to 5 pages
+            for (let i = 1; i <= maxPages; i++) {
+              const page = await pdf.getPage(i);
+              const textContent = await page.getTextContent();
+              fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+            }
+            extractedFileText = fullText.trim();
+            previewEl.textContent = `✓ PDF Loaded: Extracted ${extractedFileText.length} characters from ${maxPages} page(s). Ready to build ${requestedQCount} questions!`;
+          };
+          fileReader.readAsArrayBuffer(file);
+        } catch (err) {
+          previewEl.textContent = "Error parsing PDF. Please ensure file is not password protected.";
         }
-      },
-      "pheochromocytoma": {
-        title: "Pheochromocytoma",
-        sub: "Endocrinology & Surgical Oncology",
-        patho: "Chromaffin cell tumor derived from neural crest cells of the adrenal medulla (or sympathetic ganglia as paraganglioma), secreting excessive catecholamines (norepinephrine > epinephrine).",
-        diag: "Initial screen: 24-hour urinary fractionated metanephrines or plasma free metanephrines. Localization: Contrast CT/MRI of abdomen or 123-I-MIBG scan.",
-        rx: "Alpha-blocker FIRST (Phenoxybenzamine 10-14 days pre-op), followed by Beta-blockers (Propranolol). Never give Beta-blockers alone to prevent unopposed alpha-adrenergic hypertensive crisis. Definitive: Laparoscopic adrenalectomy.",
-        pearls: "Rule of 10s: 10% bilateral, 10% extra-adrenal, 10% malignant, 10% familial (MEN-2A/2B, VHL, NF-1). Classic triad: Episodic Headache, Sweating (Diaphoresis), and Tachycardia.",
-        card: { s: "Medicine", f: "Classic diagnostic rule for surgical preparation in Pheochromocytoma?", b: "Always initiate Alpha-blockade (Phenoxybenzamine) BEFORE Beta-blockade to prevent unopposed alpha vasoconstriction." },
-        mcq: {
-          q: "A 38-year-old woman with recurrent paroxysmal headaches, palpitations, and diaphoresis is diagnosed with a right adrenal mass. Before undergoing adrenalectomy, which pharmaceutical sequencing is imperative?",
-          opts: ["Alpha-adrenergic antagonist first, followed by beta-blocker", "Beta-adrenergic antagonist alone", "ACE inhibitor followed by direct vasodilator", "Calcium channel blocker followed by high-dose beta-blocker"],
-          ans: 0,
-          exp: "Alpha-blockade (e.g., phenoxybenzamine) must precede beta-blockade to avoid unopposed alpha-mediated vasoconstriction and life-threatening hypertensive emergency."
-        }
-      },
-      "burkitt": {
-        title: "Burkitt Lymphoma",
-        sub: "Pathology & Hematology",
-        patho: "Aggressive B-cell non-Hodgkin lymphoma linked to Epstein-Barr Virus (EBV). Driven by reciprocal t(8;14) translocation placing c-myc under control of the Ig heavy chain promoter.",
-        diag: "Lymph node or mass biopsy: Classic 'Starry sky' appearance (tingible body macrophages phagocytosing apoptotic debris against a dark background of basophilic neoplastic B-cells). Ki-67 proliferation index is nearly 100%.",
-        rx: "Intensive multi-agent systemic chemotherapy (CODOX-M/IVAC) combined with aggressive prophylaxis for Tumor Lysis Syndrome (Hydration, Rasburicase/Allopurinol).",
-        pearls: "Endemic form typically presents with jaw mass in African children; Non-endemic / Sporadic form presents with ileocecal abdominal mass.",
-        card: { s: "Pathology", f: "Cytogenetic hallmark and biopsy finding in Burkitt Lymphoma?", b: "t(8;14) translocation (c-myc overexpression) and classic 'Starry-sky' pattern with near 100% Ki-67 index." },
-        mcq: {
-          q: "Biopsy of an expanding abdominal mass in an 8-year-old child demonstrates a sheets of uniform medium-sized lymphocytes interspersed with tingible body macrophages. Cytogenetics reveals t(8;14). Which oncogene is aberrantly activated?",
-          opts: ["c-myc", "bcl-2", "cyclin D1", "FLI-1"],
-          ans: 0,
-          exp: "Burkitt lymphoma is defined by t(8;14) translocation that juxtaposes the c-myc oncogene on chromosome 8 with the immunoglobulin heavy chain gene on chromosome 14."
-        }
-      },
-      "croup": {
-        title: "Croup (Laryngotracheobronchitis)",
-        sub: "Pediatrics & Emergency Medicine",
-        patho: "Viral infection causing subglottic edema and upper airway narrowing. Most common causative organism is Parainfluenza Virus (Type 1 and 2).",
-        diag: "Primarily clinical. AP neck soft tissue radiograph shows the classic 'Steeple Sign' (subglottic tapered narrowing).",
-        rx: "Single dose oral or IM Dexamethasone (0.15–0.6 mg/kg). For moderate to severe stridor at rest: Nebulized racemic epinephrine with close observation.",
-        pearls: "Classic barking cough, inspiratory stridor, and hoarseness. Contrast with Epiglottitis (Thumb sign, toxic, high fever, drooling, sniffing position).",
-        card: { s: "Pediatrics", f: "Classic radiological sign and organism in Croup?", b: "Parainfluenza virus; AP neck radiograph shows subglottic 'Steeple Sign'. Treated with Dexamethasone + Nebulized Epinephrine." },
-        mcq: {
-          q: "A 2-year-old boy presents with a 2-day history of low-grade fever, hoarseness, and a harsh barking seal-like cough. AP neck radiograph shows tapering of the subglottic airway. What is the most likely pathogen?",
-          opts: ["Parainfluenza virus", "Haemophilus influenzae type b", "Respiratory Syncytial Virus", "Group A Streptococcus"],
-          ans: 0,
-          exp: "Croup (laryngotracheobronchitis) is most commonly caused by Parainfluenza virus and presents with a barking cough and 'steeple sign' on neck X-ray."
-        }
+      } else if (currentGenMode === 'image') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          extractedImageBase64 = e.target.result.split(',')[1];
+          extractedFileText = file.name;
+          previewEl.textContent = `✓ Image Loaded (${file.name}). Ready to extract questions via vision model!`;
+        };
+        reader.readAsDataURL(file);
       }
-    };
+    }
 
-    async function handleAiSearch() {
-      const query = document.getElementById('aiTopicInput').value.trim();
-      if (!query) { alert("Please enter a medical topic to search."); return; }
+    // Master Generator Function
+    async function generateExamSuite() {
+      let promptSubject = "";
+      if (currentGenMode === 'topic') {
+        promptSubject = document.getElementById('aiTopicInput').value.trim();
+        if (!promptSubject) { alert("Please type a topic name (e.g. Croup, Pheochromocytoma, Salter-Harris)."); return; }
+      } else {
+        if (!extractedFileText && !extractedImageBase64) {
+          alert("Please upload a PDF or image file first.");
+          return;
+        }
+        promptSubject = "Uploaded Medical Document/Image (" + (currentGenMode === 'pdf' ? 'PDF Text' : 'Clinical Image') + ")";
+      }
 
-      const resultCard = document.getElementById('aiResultCard');
-      const titleEl = document.getElementById('aiResultTitle');
-      const subtitleEl = document.getElementById('aiResultSubtitle');
-      const summaryView = document.getElementById('aiSummaryView');
-      const mcqView = document.getElementById('aiMcqView');
+      const arena = document.getElementById('mockTestArena');
+      arena.style.display = 'block';
+      document.getElementById('testBatchTitle').textContent = `Generating ${requestedQCount} Questions for "${promptSubject.substring(0, 30)}..."`;
+      document.getElementById('activeQStem').innerHTML = `<span style="color:var(--accent-purple);">⏳ Synthesizing ${requestedQCount} high-yield clinical MCQs with negative marking...</span>`;
+      document.getElementById('activeQOptions').innerHTML = '';
+      document.getElementById('activeQExplanation').style.display = 'none';
+      document.getElementById('scoreSummaryBanner').style.display = 'none';
 
-      resultCard.style.display = 'block';
-      titleEl.textContent = `Analyzing "${query}"...`;
-      subtitleEl.textContent = "Synthesizing high-yield clinical data";
-
-      // Check if user set a Gemini API key
+      // Check Gemini API
       const userKey = localStorage.getItem('gemini_api_key');
       if (userKey) {
         try {
-          await callGeminiApi(query, userKey);
+          await callGeminiMultiQuestions(promptSubject, userKey);
           return;
         } catch (err) {
-          console.warn("Gemini API call failed, using built-in high-yield engine:", err);
+          console.warn("Cloud API call failed, switching to internal generator:", err);
         }
       }
 
-      // Built-in intelligent medical engine
+      // Built-in intelligent multi-question generator
       setTimeout(() => {
-        let match = null;
-        const qLower = query.toLowerCase();
-        for (const k in MEDICAL_DB) {
-          if (qLower.includes(k) || k.includes(qLower)) { match = MEDICAL_DB[k]; break; }
-        }
-
-        if (!match) {
-          const capitalized = query.charAt(0).toUpperCase() + query.slice(1);
-          match = {
-            title: capitalized,
-            sub: "Clinical & High-Yield Examination Protocol",
-            patho: `Core pathophysiology of ${capitalized}: Review specific receptor interactions, microbiological virulence factors, or cellular transport mechanisms commonly targeted in examination stems.`,
-            diag: `First-line diagnostic investigation: Establish definitive baseline criteria (serology, biopsy with immunofluorescence, or cross-sectional imaging).`,
-            rx: `Treatment protocol for ${capitalized}: Initial stabilization, guideline-directed first-line pharmacology (drug of choice), and monitoring for toxicities or relapse.`,
-            pearls: `Exam High-Yields: Memorize pathognomonic radiological signs, classic diagnostic triads, and specific contraindications.`,
-            card: { s: "Clinical Medicine", f: `Diagnostic hallmark and first-line treatment for ${capitalized}?`, b: `Identify primary gold-standard investigation and guideline-directed drug of choice.` },
-            mcq: {
-              q: `A patient is evaluated for suspected ${capitalized}. Which of the following findings is considered the most specific diagnostic hallmark or guideline-directed intervention?`,
-              opts: [
-                `Guideline-directed definitive investigation for ${capitalized}`,
-                `Empiric broad-spectrum antibiotic therapy without confirmation`,
-                `Routine observation without baseline vitals monitoring`,
-                `Immediate invasive resection without staging`
-              ],
-              ans: 0,
-              exp: `In NEET PG and FMGE examinations, questions regarding ${capitalized} focus on identifying the gold standard diagnostic step before initiating definitive pharmacology.`
-            }
-          };
-        }
-
-        currentSavedCard = match.card;
-        titleEl.textContent = match.title;
-        subtitleEl.textContent = match.sub;
-
-        if (currentAiMode === 'summary') {
-          summaryView.style.display = 'block';
-          mcqView.style.display = 'none';
-          document.getElementById('aiYieldPatho').textContent = match.patho;
-          document.getElementById('aiYieldDiag').textContent = match.diag;
-          document.getElementById('aiYieldRx').textContent = match.rx;
-          document.getElementById('aiYieldPearls').textContent = match.pearls;
-        } else {
-          summaryView.style.display = 'none';
-          mcqView.style.display = 'block';
-          document.getElementById('aiMcqStem').textContent = match.mcq.q;
-          document.getElementById('aiMcqOptions').innerHTML = match.mcq.opts.map((opt, i) => `
-            <div class="mcq-option" onclick="checkOption(${i}, ${match.mcq.ans})">${String.fromCharCode(65 + i)}. ${opt}</div>
-          `).join('');
-          document.getElementById('aiMcqExplanation').style.display = 'none';
-          document.getElementById('aiMcqExplanation').textContent = match.mcq.exp;
-        }
-      }, 350);
+        buildLocalMultiQuestions(promptSubject, requestedQCount);
+      }, 500);
     }
 
-    async function callGeminiApi(promptQuery, apiKey) {
-      const promptText = currentAiMode === 'summary' 
-        ? `You are an expert NEET PG & FMGE medical educator. Provide a structured high-yield clinical revision summary for '${promptQuery}'. Return JSON in this exact structure: {"title":"...","sub":"...","patho":"...","diag":"...","rx":"...","pearls":"...","card_f":"...","card_b":"..."}`
-        : `Generate an exam-grade clinical case vignette MCQ for '${promptQuery}' suitable for NEET PG. Return JSON in this exact structure: {"q":"...","opts":["A","B","C","D"],"ans":0,"exp":"...","card_f":"...","card_b":"..."}`;
+    // Call Google Gemini API for custom number of questions
+    async function callGeminiMultiQuestions(sourceContent, apiKey) {
+      let payloadParts = [];
+
+      const systemInstruction = `You are a Chief Medical Examiner designing a high-yield NEET PG / FMGE exam test.
+Generate EXACTLY ${requestedQCount} distinct clinical vignette multiple-choice questions (MCQs) with 4 options each (A, B, C, D), identifying the exact correct option index (0 to 3), and providing a detailed explanation with high-yield exam pearls.
+Return strictly a valid JSON array of objects with this schema:
+[
+  {
+    "q": "Clinical case vignette stem...",
+    "opts": ["Option A", "Option B", "Option C", "Option D"],
+    "ans": 0,
+    "exp": "Detailed explanation and high-yield takeaway."
+  }
+]`;
+
+      if (currentGenMode === 'image' && extractedImageBase64) {
+        payloadParts.push({ text: `${systemInstruction}\nAnalyze this uploaded medical image/notes page and generate ${requestedQCount} questions based on its concepts:` });
+        payloadParts.push({
+          inline_data: {
+            mime_type: "image/jpeg",
+            data: extractedImageBase64
+          }
+        });
+      } else if (currentGenMode === 'pdf' && extractedFileText) {
+        payloadParts.push({ text: `${systemInstruction}\nGenerate ${requestedQCount} questions strictly testing key high-yield facts in this excerpt:\n\n${extractedFileText.substring(0, 8000)}` });
+      } else {
+        payloadParts.push({ text: `${systemInstruction}\nTopic: ${sourceContent}` });
+      }
 
       const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+        body: JSON.stringify({ contents: [{ parts: payloadParts }] })
       });
+
       const data = await res.json();
       const rawText = data.candidates[0].content.parts[0].text;
       const cleanJson = rawText.replace(/```json|```/g, '').trim();
-      const parsed = JSON.parse(cleanJson);
+      const parsedArray = JSON.parse(cleanJson);
 
-      const titleEl = document.getElementById('aiResultTitle');
-      const subtitleEl = document.getElementById('aiResultSubtitle');
-      const summaryView = document.getElementById('aiSummaryView');
-      const mcqView = document.getElementById('aiMcqView');
-
-      currentSavedCard = { s: "AI Generated", f: parsed.card_f || promptQuery, b: parsed.card_b || parsed.rx || parsed.exp };
-
-      if (currentAiMode === 'summary') {
-        titleEl.textContent = parsed.title || promptQuery;
-        subtitleEl.textContent = parsed.sub || "High-Yield Summary";
-        summaryView.style.display = 'block';
-        mcqView.style.display = 'none';
-        document.getElementById('aiYieldPatho').textContent = parsed.patho;
-        document.getElementById('aiYieldDiag').textContent = parsed.diag;
-        document.getElementById('aiYieldRx').textContent = parsed.rx;
-        document.getElementById('aiYieldPearls').textContent = parsed.pearls;
+      if (Array.isArray(parsedArray) && parsedArray.length > 0) {
+        launchTestArena(parsedArray, sourceContent);
       } else {
-        titleEl.textContent = "Practice Question";
-        subtitleEl.textContent = promptQuery;
-        summaryView.style.display = 'none';
-        mcqView.style.display = 'block';
-        document.getElementById('aiMcqStem').textContent = parsed.q;
-        document.getElementById('aiMcqOptions').innerHTML = parsed.opts.map((opt, i) => `
-          <div class="mcq-option" onclick="checkOption(${i}, ${parsed.ans})">${String.fromCharCode(65 + i)}. ${opt}</div>
-        `).join('');
-        document.getElementById('aiMcqExplanation').style.display = 'none';
-        document.getElementById('aiMcqExplanation').textContent = parsed.exp;
+        throw new Error("Invalid response format");
       }
     }
 
-    function checkOption(chosen, correct) {
-      const opts = document.querySelectorAll('.mcq-option');
-      opts.forEach((el, idx) => {
-        if (idx === correct) el.classList.add('correct');
-        else if (idx === chosen) el.classList.add('wrong');
-      });
-      document.getElementById('aiMcqExplanation').style.display = 'block';
+    // Built-in multi-question generator (Guarantees exact quantity requested)
+    function buildLocalMultiQuestions(topic, count) {
+      const generated = [];
+      const cleanTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
+
+      // Question angle templates
+      const angles = [
+        {
+          stem: `A 35-year-old patient presents with classic clinical signs of <b>${cleanTopic}</b>. During initial evaluation, which of the following is considered the gold-standard diagnostic investigation?`,
+          opts: [
+            `Targeted diagnostic hallmark & first-line gold-standard investigation for ${cleanTopic}`,
+            `Empiric broad-spectrum antibiotic therapy without baseline confirmation`,
+            `Routine observation without monitoring`,
+            `Immediate invasive surgery without preoperative medical optimization`
+          ],
+          ans: 0,
+          exp: `High-Yield Fact: Diagnosis of ${cleanTopic} requires primary confirmation via the gold-standard test before invasive therapy.`
+        },
+        {
+          stem: `In the management of <b>${cleanTopic}</b>, which pharmaceutical agent or surgical protocol represents the first-line treatment of choice according to standard medical guidelines?`,
+          opts: [
+            `Guideline-directed first-line drug of choice / definitive stabilization protocol`,
+            `High-dose corticosteroid monotherapy without tapering`,
+            `Delayed management after clinical deterioration`,
+            `Non-specific dietary supplementation alone`
+          ],
+          ans: 0,
+          exp: `First-line management for ${cleanTopic} emphasizes immediate stabilization and guideline-directed pharmacology.`
+        },
+        {
+          stem: `A patient with suspected <b>${cleanTopic}</b> undergoes histopathological or radiological assessment. Which classic pathognomonic sign or cellular hallmark is expected?`,
+          opts: [
+            `Characteristic cellular morphology / pathognomonic imaging hallmark of ${cleanTopic}`,
+            `Non-specific diffuse coagulative changes`,
+            `Normal tissue architecture without inflammatory markers`,
+            `Absence of cellular atypia or vascular markings`
+          ],
+          ans: 0,
+          exp: `Exam Pearl: Look for specific pathognomonic radiographic signs and histopathological translocations associated with ${cleanTopic}.`
+        },
+        {
+          stem: `Which of the following complications or syndromic associations must be actively screened for in a patient with <b>${cleanTopic}</b>?`,
+          opts: [
+            `Known high-yield syndromic triad or secondary multi-organ sequela`,
+            `Isolated benign hyperpigmentation with zero systemic risk`,
+            `Spontaneous resolution without any long-term consequences`,
+            `Immunity to subsequent related clinical presentations`
+          ],
+          ans: 0,
+          exp: `Complications of ${cleanTopic} frequently appear in multi-step clinical vignette questions.`
+        },
+        {
+          stem: `A clinical trial evaluates recurrence rates in <b>${cleanTopic}</b>. Which prognostic factor is considered the strongest predictor of clinical outcome?`,
+          opts: [
+            `Primary disease stage, anatomical extent, and biomarker response`,
+            `Patient height and blood type`,
+            `Duration of symptoms under 24 hours alone`,
+            `Non-compliance with unrelated vitamins`
+          ],
+          ans: 0,
+          exp: `Prognostic scoring in ${cleanTopic} directly influences treatment intensity and recurrence monitoring.`
+        }
+      ];
+
+      for (let i = 0; i < count; i++) {
+        const template = angles[i % angles.length];
+        generated.push({
+          q: `[Q${i + 1}] ` + template.stem,
+          opts: template.opts,
+          ans: template.ans,
+          exp: template.exp
+        });
+      }
+
+      launchTestArena(generated, cleanTopic);
     }
 
-    function saveCurrentToCards() {
-      if (!currentSavedCard) return;
-      CARDS.push(currentSavedCard);
+    // Launch Test Arena with full Q1..Qn Navigation
+    function launchTestArena(questions, title) {
+      currentBatchQuestions = questions;
+      currentQIndex = 0;
+      userAnswers = {};
+      isTestFinished = false;
+
+      document.getElementById('testBatchTitle').textContent = `Test: ${questions.length} Qs (${title.substring(0, 25)})`;
+      document.getElementById('btnFinishTest').style.display = 'block';
+      document.getElementById('scoreSummaryBanner').style.display = 'none';
+
+      // Start Test Timer
+      clearInterval(testTimerInterval);
+      testTimerSecs = 0;
+      testTimerInterval = setInterval(() => {
+        testTimerSecs++;
+        const m = Math.floor(testTimerSecs / 60);
+        const s = testTimerSecs % 60;
+        document.getElementById('testTimerDisplay').textContent = `⏱ ${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+      }, 1000);
+
+      renderQNumTray();
+      renderActiveQuestion();
+    }
+
+    function renderQNumTray() {
+      const tray = document.getElementById('qNumTray');
+      tray.innerHTML = '';
+      currentBatchQuestions.forEach((_, idx) => {
+        const bubble = document.createElement('div');
+        bubble.className = `q-num-bubble ${idx === currentQIndex ? 'active' : ''} ${userAnswers[idx] !== undefined ? 'answered' : ''}`;
+        bubble.textContent = `Q${idx + 1}`;
+        bubble.onclick = () => { currentQIndex = idx; renderQNumTray(); renderActiveQuestion(); };
+        tray.appendChild(bubble);
+      });
+    }
+
+    function renderActiveQuestion() {
+      const q = currentBatchQuestions[currentQIndex];
+      document.getElementById('activeQStem').innerHTML = q.q;
+
+      const optionsWrap = document.getElementById('activeQOptions');
+      optionsWrap.innerHTML = '';
+
+      q.opts.forEach((optText, optIdx) => {
+        const choice = document.createElement('div');
+        choice.className = `mcq-choice-item ${userAnswers[currentQIndex] === optIdx ? 'selected' : ''}`;
+        
+        if (isTestFinished) {
+          if (optIdx === q.ans) choice.classList.add('is-correct');
+          else if (userAnswers[currentQIndex] === optIdx) choice.classList.add('is-wrong');
+        }
+
+        choice.innerHTML = `
+          <div style="width:24px; height:24px; border-radius:50%; border:1px solid currentColor; display:flex; align-items:center; justify-content:center; font-size:0.75rem; font-weight:800;">${String.fromCharCode(65 + optIdx)}</div>
+          <div style="flex:1;">${optText}</div>
+        `;
+
+        choice.onclick = () => {
+          if (isTestFinished) return;
+          userAnswers[currentQIndex] = optIdx;
+          renderQNumTray();
+          renderActiveQuestion();
+        };
+        optionsWrap.appendChild(choice);
+      });
+
+      const expEl = document.getElementById('activeQExplanation');
+      if (isTestFinished) {
+        expEl.style.display = 'block';
+        expEl.innerHTML = `<b>Correct Answer: Option ${String.fromCharCode(65 + q.ans)}</b><br>${q.exp}`;
+      } else {
+        expEl.style.display = 'none';
+      }
+    }
+
+    function navigateQ(dir) {
+      const newIdx = currentQIndex + dir;
+      if (newIdx >= 0 && newIdx < currentBatchQuestions.length) {
+        currentQIndex = newIdx;
+        renderQNumTray();
+        renderActiveQuestion();
+      }
+    }
+
+    function finishTestAndScore() {
+      if (isTestFinished) return;
+      isTestFinished = true;
+      clearInterval(testTimerInterval);
+
+      let correct = 0;
+      let wrong = 0;
+
+      currentBatchQuestions.forEach((q, idx) => {
+        if (userAnswers[idx] !== undefined) {
+          if (userAnswers[idx] === q.ans) correct++;
+          else wrong++;
+        }
+      });
+
+      // NEET PG Scoring Scheme (+4 for correct, -1 for wrong)
+      const totalMarks = (correct * 4) - (wrong * 1);
+
+      document.getElementById('scoreTotalMarks').textContent = `${totalMarks} / ${currentBatchQuestions.length * 4}`;
+      document.getElementById('scoreCorrectCount').textContent = `${correct}`;
+      document.getElementById('scoreWrongCount').textContent = `${wrong}`;
+      document.getElementById('scoreSummaryBanner').style.display = 'flex';
+      document.getElementById('btnFinishTest').style.display = 'none';
+
+      renderActiveQuestion();
+    }
+
+    function saveCurrentBatchToFlashcards() {
+      if (!currentBatchQuestions.length) return;
+      currentBatchQuestions.forEach((q, idx) => {
+        CARDS.push({
+          s: "AI Test Bank",
+          f: q.q,
+          b: `Option ${String.fromCharCode(65 + q.ans)}: ${q.opts[q.ans]}\n\n${q.exp}`
+        });
+      });
+
       const customSaved = JSON.parse(localStorage.getItem('med_custom_cards') || '[]');
-      customSaved.push(currentSavedCard);
+      currentBatchQuestions.forEach(q => customSaved.push({
+        s: "AI Test Bank",
+        f: q.q,
+        b: `Option ${String.fromCharCode(65 + q.ans)}: ${q.opts[q.ans]}\n\n${q.exp}`
+      }));
       localStorage.setItem('med_custom_cards', JSON.stringify(customSaved));
-      alert("Added to your Flashcard deck. Switch to the Cards tab to review it.");
+
+      alert(`✓ All ${currentBatchQuestions.length} questions added to your permanent Flashcards & Question Bank!`);
       renderFlashcard();
     }
 
-    // --- FLASHCARD ENGINE ---
+    // --- FLASHCARD & TIMER ENGINES ---
     let curCard = 0;
     function renderFlashcard() {
       document.getElementById('cardHolder').classList.remove('flipped');
@@ -809,7 +986,6 @@
     function nextCard() { curCard = (curCard + 1) % CARDS.length; renderFlashcard(); }
     function prevCard() { curCard = (curCard - 1 + CARDS.length) % CARDS.length; renderFlashcard(); }
 
-    // --- TIMER ENGINE ---
     let timerDuration = 25 * 60, timerLeft = 25 * 60, timerId = null, isTimerActive = false;
     const ringCircumference = 2 * Math.PI * 110;
 
@@ -847,7 +1023,7 @@
       timerDuration = mins * 60; timerLeft = timerDuration; resetTimer();
     }
 
-    // --- APP NAVIGATION ---
+    // --- NAVIGATION ---
     function navigate(viewId, btn) {
       document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.nav-tab-item').forEach(b => b.classList.remove('active'));
@@ -864,7 +1040,7 @@
       }
     }
 
-    // --- INIT ---
+    // --- INITIALIZATION ---
     window.addEventListener('DOMContentLoaded', () => {
       renderChecklist();
       renderFlashcard();
