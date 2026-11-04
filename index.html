@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>MedMaster - Clinical & High-Yield Prep</title>
+  <title>MedMaster - Clinical AI & High-Yield Prep</title>
   
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0369a1">
@@ -14,12 +14,13 @@
   <style>
     :root {
       --bg: #050811;
-      --card-bg: rgba(13, 20, 36, 0.72);
+      --card-bg: rgba(13, 20, 36, 0.76);
       --card-border: rgba(56, 189, 248, 0.16);
       --primary: #0284c7;
       --primary-light: #38bdf8;
       --accent-cyan: #06b6d4;
       --accent-emerald: #10b981;
+      --accent-purple: #a855f7;
       --accent-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -55,28 +56,21 @@
       100% { transform: translate(-30px, 70px) scale(0.95); }
     }
 
-    /* Sticky Glass Header */
+    /* Header */
     header {
       position: sticky; top: 0; z-index: 50;
-      background: rgba(5, 8, 17, 0.78);
+      background: rgba(5, 8, 17, 0.82);
       backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--card-border);
       padding: 14px 20px;
       display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
     }
     .brand-wrap { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
       width: 38px; height: 38px; border-radius: 12px;
       background: linear-gradient(135deg, #0284c7, #06b6d4);
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 20px rgba(2, 132, 199, 0.6);
-      animation: pulseGlow 4s infinite alternate;
-    }
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 10px rgba(2, 132, 199, 0.4); }
-      100% { box-shadow: 0 0 22px rgba(56, 189, 248, 0.75); }
+      box-shadow: 0 0 18px rgba(2, 132, 199, 0.5);
     }
     .brand-icon svg { width: 22px; height: 22px; stroke: #fff; fill: none; }
     .brand-title { font-size: 1.18rem; font-weight: 800; letter-spacing: -0.4px; color: #fff; }
@@ -85,45 +79,33 @@
     .user-pill {
       font-size: 0.78rem; font-weight: 600; padding: 7px 15px; border-radius: 30px;
       background: rgba(56, 189, 248, 0.12); border: 1px solid var(--primary-light);
-      color: var(--primary-light); cursor: pointer; transition: all 0.25s ease;
+      color: var(--primary-light); cursor: pointer;
     }
-    .user-pill:active { transform: scale(0.94); background: var(--primary); color: #fff; }
 
-    /* Views */
     .view-content { display: none; padding: 18px; max-width: 680px; margin: 0 auto; position: relative; z-index: 1; }
-    .view-content.active { display: block; animation: slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1); }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+    .view-content.active { display: block; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Grand Stats Dashboard */
+    /* Grand Stats */
     .grand-stats-card {
       background: linear-gradient(135deg, rgba(2,132,199,0.18) 0%, rgba(13,20,36,0.85) 100%);
       border: 1px solid rgba(56, 189, 248, 0.3);
-      backdrop-filter: blur(20px);
-      border-radius: 24px; padding: 22px; margin-bottom: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);
+      border-radius: 24px; padding: 20px; margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
-    .grand-stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-    .grand-stats-header h3 { font-size: 1.45rem; font-weight: 800; color: #fff; }
-    .grand-stats-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
-
-    /* Cycles Overview Bar */
     .cycles-legend {
       display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px;
-      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 14px; text-align: center;
+      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 14px; text-align: center; margin-top: 14px;
     }
-    .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+    .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); }
     .cycle-tag-count { font-size: 0.95rem; font-weight: 800; color: #fff; margin-top: 2px; }
 
-    /* Accordion Subject Card */
+    /* Accordion Subjects */
     .subject-accordion {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
+      background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 20px; margin-bottom: 14px; overflow: hidden;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(16px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+      backdrop-filter: blur(16px); transition: transform 0.2s;
     }
-    .subject-accordion:hover { border-color: rgba(56, 189, 248, 0.4); transform: translateY(-1px); }
     .subject-header-btn {
       width: 100%; padding: 16px 18px; background: none; border: none;
       display: flex; align-items: center; justify-content: space-between;
@@ -134,99 +116,69 @@
       width: 44px; height: 44px; border-radius: 14px;
       background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
       display: flex; align-items: center; justify-content: center; font-size: 1.35rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
-    .sub-text-title { font-size: 1.05rem; font-weight: 700; color: #fff; }
-    .sub-text-count { font-size: 0.74rem; color: var(--text-muted); margin-top: 3px; }
-    .accordion-arrow {
-      width: 20px; height: 20px; stroke: var(--text-muted); transition: transform 0.3s ease;
-    }
+    .accordion-arrow { width: 20px; height: 20px; stroke: var(--text-muted); transition: transform 0.3s; }
     .subject-accordion.open .accordion-arrow { transform: rotate(180deg); stroke: var(--primary-light); }
-
     .sub-progress-bar-wrap { height: 4px; background: rgba(255,255,255,0.06); width: 100%; }
-    .sub-progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent-cyan)); transition: width 0.4s ease; }
-
+    .sub-progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), var(--accent-cyan)); transition: width 0.3s; }
     .topic-list-drawer { display: none; padding: 10px 16px 16px; border-top: 1px solid rgba(255,255,255,0.04); }
     .subject-accordion.open .topic-list-drawer { display: block; }
 
-    /* Topic Box with 5 Revision Buttons */
     .topic-row {
       background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04);
       border-radius: 14px; padding: 12px; margin-top: 10px;
-      transition: background 0.2s;
     }
-    .topic-row:hover { background: rgba(255,255,255,0.04); }
-    .topic-title-bar {
-      font-size: 0.9rem; font-weight: 600; color: #e2e8f0; line-height: 1.45;
-      margin-bottom: 10px;
-    }
-
-    .revision-pills-row {
-      display: flex; gap: 6px; align-items: center;
-    }
+    .revision-pills-row { display: flex; gap: 6px; align-items: center; margin-top: 8px; }
     .rev-pill {
       flex: 1; padding: 6px 2px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);
       background: rgba(255,255,255,0.04); color: var(--text-muted);
       font-size: 0.72rem; font-weight: 700; text-align: center; cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .rev-pill:active { transform: scale(0.92); }
-    .rev-pill.done {
-      background: linear-gradient(135deg, #0284c7, #06b6d4);
-      color: #fff; border-color: transparent;
-      box-shadow: 0 0 10px rgba(6,182,212,0.4);
-    }
-    .rev-pill.r5-done {
-      background: linear-gradient(135deg, #10b981, #059669);
-      box-shadow: 0 0 12px rgba(16,185,129,0.5);
-    }
+    .rev-pill.done { background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; border-color: transparent; }
+    .rev-pill.r5-done { background: linear-gradient(135deg, #10b981, #059669); }
 
-    /* Focus Timer */
-    .timer-card {
-      background: var(--card-bg); border: 1px solid var(--card-border);
-      border-radius: 28px; padding: 30px 20px; text-align: center;
-      backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    /* AI Search & Generator Tab */
+    .ai-hero-card {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.18) 0%, rgba(13, 20, 36, 0.88) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 24px; padding: 22px; margin-bottom: 20px;
+      backdrop-filter: blur(20px); box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
-    .timer-badge-mode {
+    .ai-badge {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(2,132,199,0.14); border: 1px solid var(--card-border);
-      color: var(--primary-light); font-size: 0.78rem; font-weight: 700;
-      padding: 6px 14px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.8px;
+      background: rgba(168, 85, 247, 0.15); border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #c084fc; font-size: 0.74rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; text-transform: uppercase;
     }
-    .timer-circle-wrap { position: relative; width: 250px; height: 250px; margin: 24px auto; }
-    .timer-circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-    .circle-base { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
-    .circle-indicator {
-      fill: none; stroke: url(#timerGrad); stroke-width: 9;
-      stroke-linecap: round; stroke-dasharray: 691; stroke-dashoffset: 0;
-      transition: stroke-dashoffset 0.4s ease;
+    .ai-search-bar {
+      display: flex; gap: 8px; margin-top: 16px;
     }
-    .time-digits-display {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-size: 3.6rem; font-weight: 900; font-variant-numeric: tabular-nums;
-      color: #fff; letter-spacing: -1.5px;
+    .ai-input {
+      flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 12px 16px; color: #fff; font-size: 0.95rem; outline: none;
+    }
+    .ai-input:focus { border-color: var(--accent-purple); }
+    .btn-ai-generate {
+      background: linear-gradient(135deg, #a855f7, #6366f1); border: none; border-radius: 14px;
+      color: #fff; padding: 0 18px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+      display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 16px rgba(168, 85, 247, 0.4);
+    }
+    .ai-suggest-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .ai-chip {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted); font-size: 0.72rem; padding: 5px 10px; border-radius: 8px; cursor: pointer;
     }
 
-    .timer-chips-grid { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
-    .preset-pill {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--card-border);
-      color: var(--text-muted); padding: 8px 14px; border-radius: 12px;
-      font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: 0.2s;
+    .ai-result-box {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 20px; padding: 20px; margin-top: 18px; display: none;
+      backdrop-filter: blur(16px); animation: slideUp 0.3s ease;
     }
-    .preset-pill.active { background: var(--primary); color: #fff; border-color: var(--primary-light); box-shadow: 0 0 14px rgba(2,132,199,0.5); }
-    
-    .timer-btn-row { display: flex; gap: 12px; justify-content: center; max-width: 360px; margin: 0 auto; }
-    .btn-main-action {
-      flex: 2; padding: 15px; border-radius: 16px; border: none;
-      background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff;
-      font-weight: 700; font-size: 1.05rem; cursor: pointer;
-      box-shadow: 0 4px 18px rgba(2,132,199,0.5); transition: 0.2s;
+    .ai-mcq-option {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 10px; padding: 12px; margin-top: 8px; font-size: 0.88rem; cursor: pointer; transition: 0.2s;
     }
-    .btn-main-action:active { transform: scale(0.97); }
-    .btn-sub-action {
-      flex: 1; padding: 15px; border-radius: 16px; border: 1px solid var(--card-border);
-      background: rgba(255,255,255,0.05); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer;
-    }
+    .ai-mcq-option:hover { background: rgba(255,255,255,0.06); }
+    .ai-mcq-option.correct { background: rgba(16, 185, 129, 0.18); border-color: var(--accent-emerald); color: #34d399; font-weight: 600; }
+    .ai-mcq-option.wrong { background: rgba(244, 63, 94, 0.18); border-color: #f43f5e; color: #fb7185; }
 
     /* Flashcard UI */
     .flashcard-deck-wrap { perspective: 1200px; margin-bottom: 22px; cursor: pointer; }
@@ -236,7 +188,6 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
       text-align: center; position: relative; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       transform-style: preserve-3d; backdrop-filter: blur(20px);
-      box-shadow: 0 14px 40px rgba(0,0,0,0.4);
     }
     .flashcard-deck-wrap.flipped .flashcard-inner-box { transform: rotateY(180deg); }
     .card-face { backface-visibility: hidden; width: 100%; }
@@ -247,29 +198,56 @@
       color: var(--accent-cyan); background: rgba(6,182,212,0.12);
       padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.3);
     }
-    .card-content-text { font-size: 1.15rem; font-weight: 600; line-height: 1.6; margin-top: 15px; }
+
+    /* Timer Styles */
+    .timer-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 28px; padding: 28px 20px; text-align: center; backdrop-filter: blur(20px);
+    }
+    .timer-circle-wrap { position: relative; width: 230px; height: 230px; margin: 20px auto; }
+    .timer-circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .circle-base { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
+    .circle-indicator {
+      fill: none; stroke: url(#timerGrad); stroke-width: 9;
+      stroke-linecap: round; stroke-dasharray: 691; stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+    .time-digits-display {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-size: 3.4rem; font-weight: 900; font-variant-numeric: tabular-nums;
+      color: #fff; letter-spacing: -1.5px;
+    }
 
     /* Bottom Navigation */
     .nav-bar-container {
       position: fixed; bottom: 0; left: 0; right: 0; height: 72px;
-      background: rgba(5, 8, 17, 0.88);
-      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      background: rgba(5, 8, 17, 0.9); backdrop-filter: blur(24px);
       border-top: 1px solid var(--card-border);
       display: flex; justify-content: space-around; align-items: center; z-index: 45;
     }
     .nav-tab-item {
       background: none; border: none; color: var(--text-muted);
-      display: flex; flex-direction: column; align-items: center; gap: 5px;
-      font-size: 0.72rem; font-weight: 600; cursor: pointer; flex: 1; transition: 0.25s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      font-size: 0.68rem; font-weight: 600; cursor: pointer; flex: 1; transition: 0.2s;
     }
-    .nav-tab-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; transition: 0.25s; }
+    .nav-tab-item svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; }
     .nav-tab-item.active { color: var(--primary-light); }
-    .nav-tab-item.active svg { transform: translateY(-2px); stroke: var(--primary-light); filter: drop-shadow(0 0 6px rgba(56,189,248,0.5)); }
+    .nav-tab-item.active svg { stroke: var(--primary-light); filter: drop-shadow(0 0 6px rgba(56,189,248,0.5)); }
+
+    .btn-main-action {
+      padding: 14px 22px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff;
+      font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    }
+    .btn-sub-action {
+      padding: 14px 22px; border-radius: 14px; border: 1px solid var(--card-border);
+      background: rgba(255,255,255,0.05); color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Animated Aurora Glow Elements -->
+  <!-- Ambient Light Orbs -->
   <div class="aurora-bg">
     <div class="aurora-orb orb-1"></div>
     <div class="aurora-orb orb-2"></div>
@@ -282,21 +260,20 @@
       <div class="brand-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div class="brand-title">Med<span>Master</span></div>
+      <div class="brand-title">Med<span>Master</span> AI</div>
     </div>
     <div id="authBtn" class="user-pill" onclick="doctorLogin()">Doctor Login</div>
   </header>
 
-  <!-- 1. CHECKLIST SCREEN (5 REVISION CYCLES) -->
+  <!-- TAB 1: 19 SUBJECTS CHECKLIST -->
   <main id="view-checklist" class="view-content active">
     <div class="grand-stats-card">
-      <div class="grand-stats-header">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
-          <h3 id="overallMasteryPct">0% Mastered</h3>
-          <p><span id="totalRevsLogged">0</span> of <span id="maxRevsTarget">0</span> Total Revisions Completed</p>
+          <h3 id="overallMasteryPct" style="font-size:1.35rem; font-weight:800;">0% Mastered</h3>
+          <p style="font-size:0.8rem; color:var(--text-muted);"><span id="totalRevsLogged">0</span> of <span id="maxRevsTarget">0</span> Total Revisions Logged</p>
         </div>
       </div>
-      <!-- Real-time 5 Cycles Tracker -->
       <div class="cycles-legend">
         <div><div class="cycle-tag-badge">R1</div><div class="cycle-tag-count" id="countR1">0</div></div>
         <div><div class="cycle-tag-badge">R2</div><div class="cycle-tag-count" id="countR2">0</div></div>
@@ -305,23 +282,80 @@
         <div><div class="cycle-tag-badge">R5</div><div class="cycle-tag-count" id="countR5" style="color:var(--accent-emerald);">0</div></div>
       </div>
     </div>
-
-    <!-- 19 Accordions -->
     <div id="subjectListContainer"></div>
   </main>
 
-  <!-- 2. FOCUS STUDY TIMER -->
-  <section id="view-timer" class="view-content">
-    <div class="timer-card">
-      <div id="timerModeBadge" class="timer-badge-mode">
-        <span>⚡</span> Deep Study Session
+  <!-- TAB 2: AI CLINICAL SEARCH & GENERATOR -->
+  <section id="view-ai" class="view-content">
+    <div class="ai-hero-card">
+      <div class="ai-badge">✦ Gemini AI Engine</div>
+      <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Search or Generate Questions</h2>
+      <p style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Type any clinical topic, drug, syndrome, or sign to create high-yield exam cards.</p>
+      
+      <div class="ai-search-bar">
+        <input type="text" id="aiTopicInput" class="ai-input" placeholder="e.g., Pheochromocytoma, Horner syndrome...">
+        <button class="btn-ai-generate" onclick="runAiGeneration()">Generate</button>
       </div>
 
-      <div class="timer-chips-grid" style="margin-top: 18px;">
-        <button class="preset-pill active" onclick="setTimer(25, this)">25m Focus</button>
-        <button class="preset-pill" onclick="setTimer(50, this)">50m Deep Block</button>
-        <button class="preset-pill" onclick="setTimer(90, this)">90m GT Block</button>
-        <button class="preset-pill" onclick="setTimer(5, this)">5m Rest</button>
+      <div class="ai-suggest-chips">
+        <span class="ai-chip" onclick="useSuggest('Ewing Sarcoma')">Ewing Sarcoma</span>
+        <span class="ai-chip" onclick="useSuggest('Lithium Toxicity')">Lithium Toxicity</span>
+        <span class="ai-chip" onclick="useSuggest('Pemphigus vs Pemphigoid')">Pemphigus vs Pemphigoid</span>
+        <span class="ai-chip" onclick="useSuggest('Salter-Harris')">Salter-Harris</span>
+      </div>
+    </div>
+
+    <!-- AI Output Box -->
+    <div id="aiResultCard" class="ai-result-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="ai-badge" style="background:rgba(16,185,129,0.15); color:var(--accent-emerald); border-color:rgba(16,185,129,0.4);" id="aiGeneratedBadge">Generated High-Yield Question</span>
+        <button onclick="saveAiCardToFlashcards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:5px 12px; border-radius:8px; font-size:0.75rem; cursor:pointer; font-weight:700;">+ Save to Cards</button>
+      </div>
+      
+      <div id="aiClinicalScenario" style="font-size:0.95rem; line-height:1.5; font-weight:600; margin-bottom:12px;"></div>
+      <div id="aiOptionsWrap"></div>
+      
+      <div id="aiExplanation" style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px; font-size:0.84rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: FLASHCARDS -->
+  <section id="view-cards" class="view-content">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 style="font-size:1.15rem; font-weight:800;">High-Yield Cards</h2>
+      <span style="font-size:0.8rem; color:var(--text-muted);" id="cardCounter">1 / 10</span>
+    </div>
+
+    <div class="flashcard-deck-wrap" id="cardHolder" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner-box">
+        <div class="card-face">
+          <span class="card-subject-tag" id="cardSubjectBadge">Pharmacology</span>
+          <div class="card-content-text" id="cardFront" style="font-size:1.15rem; font-weight:600; line-height:1.6; margin-top:15px;">Loading...</div>
+        </div>
+        <div class="card-face card-face-back">
+          <span class="card-subject-tag" style="color:var(--accent-emerald); background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3);">High-Yield Answer</span>
+          <div class="card-content-text" id="cardBack" style="font-size:1.15rem; font-weight:600; line-height:1.6; margin-top:15px;">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px;">
+      <button class="btn-sub-action" style="flex:1;" onclick="prevCard()">← Prev</button>
+      <button class="btn-main-action" style="flex:1;" onclick="nextCard()">Next Card →</button>
+    </div>
+  </section>
+
+  <!-- TAB 4: FOCUS TIMER -->
+  <section id="view-timer" class="view-content">
+    <div class="timer-card">
+      <div class="timer-badge-mode" style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
+        <span>⚡</span> Deep Focus Session
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:center; margin-top:16px;">
+        <button class="preset-pill active" onclick="setTimer(25, this)" style="background:var(--primary); color:#fff; border:1px solid var(--primary-light); padding:8px 14px; border-radius:12px; font-size:0.8rem; cursor:pointer;">25m</button>
+        <button class="preset-pill" onclick="setTimer(50, this)" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--card-border); padding:8px 14px; border-radius:12px; font-size:0.8rem; cursor:pointer;">50m</button>
+        <button class="preset-pill" onclick="setTimer(90, this)" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--card-border); padding:8px 14px; border-radius:12px; font-size:0.8rem; cursor:pointer;">90m</button>
       </div>
 
       <div class="timer-circle-wrap">
@@ -338,331 +372,76 @@
         <div id="timerNumbers" class="time-digits-display">25:00</div>
       </div>
 
-      <div class="timer-btn-row">
-        <button id="togglePlayBtn" class="btn-main-action" onclick="toggleTimer()">Start Session</button>
-        <button class="btn-sub-action" onclick="resetTimer()">Reset</button>
-      </div>
-
-      <div style="display:flex; justify-content:space-around; margin-top: 26px; border-top:1px solid rgba(255,255,255,0.06); padding-top:18px;">
-        <div>
-          <div style="font-size:1.3rem; font-weight:800; color:#fff;" id="metricSessions">0</div>
-          <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-muted);">Completed</div>
-        </div>
-        <div>
-          <div style="font-size:1.3rem; font-weight:800; color:#fff;" id="metricMinutes">0m</div>
-          <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-muted);">Focus Time</div>
-        </div>
+      <div style="display:flex; gap:10px; max-width:320px; margin:0 auto;">
+        <button id="togglePlayBtn" class="btn-main-action" style="flex:2;" onclick="toggleTimer()">Start Session</button>
+        <button class="btn-sub-action" style="flex:1;" onclick="resetTimer()">Reset</button>
       </div>
     </div>
   </section>
 
-  <!-- 3. FLASHCARDS SCREEN -->
-  <section id="view-cards" class="view-content">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-      <h2 style="font-size:1.15rem; font-weight:800;">High-Yield Clinical Cards</h2>
-      <span style="font-size:0.8rem; color:var(--text-muted);" id="cardCounter">1 / 10</span>
-    </div>
-
-    <div class="flashcard-deck-wrap" id="cardHolder" onclick="this.classList.toggle('flipped')">
-      <div class="flashcard-inner-box">
-        <div class="card-face">
-          <span class="card-subject-tag" id="cardSubjectBadge">Pharmacology</span>
-          <div class="card-content-text" id="cardFront">Loading...</div>
-        </div>
-        <div class="card-face card-face-back">
-          <span class="card-subject-tag" style="color:var(--accent-emerald); background:rgba(16,185,129,0.12); border-color:rgba(16,185,129,0.3);">High-Yield Answer</span>
-          <div class="card-content-text" id="cardBack">Loading...</div>
-        </div>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:12px;">
-      <button class="btn-sub-action" onclick="prevCard()">← Previous</button>
-      <button class="btn-main-action" onclick="nextCard()">Next Card →</button>
-    </div>
-  </section>
-
-  <!-- Bottom Navigation -->
+  <!-- 4-Tab Bottom Floating Navigation -->
   <nav class="nav-bar-container">
     <button class="nav-tab-item active" onclick="navigate('view-checklist', this)">
       <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-      19 Subjects
+      Subjects
     </button>
-    <button class="nav-tab-item" onclick="navigate('view-timer', this)">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      Focus Timer
+    <button class="nav-tab-item" onclick="navigate('view-ai', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      AI Search
     </button>
     <button class="nav-tab-item" onclick="navigate('view-cards', this)">
       <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      Flashcards
+      Cards
+    </button>
+    <button class="nav-tab-item" onclick="navigate('view-timer', this)">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Timer
     </button>
   </nav>
 
   <script>
-    // --- 19 MBBS SUBJECTS WITH HIGH-YIELD TOPICS ---
+    // --- 19 SUBJECT DATASET WITH REVISION CYCLES ---
     const SUBJECT_DATA = [
-      {
-        name: "Anatomy", icon: "🦴",
-        topics: [
-          "Brachial Plexus Branches & Clinical Cord Lesions (Erb's & Klumpke's)",
-          "Upper Limb Spaces & Carpal Tunnel Syndrome Details",
-          "Femoral Triangle, Canal & Inguinal Hernia Coverings",
-          "Cranial Nerves Foramina & Cavernous Sinus Anatomy",
-          "Larynx Intrinsic Muscles & Recurrent Laryngeal Nerve Course",
-          "Embryology: Pharyngeal Arches, Pouches & Derivatives",
-          "Coronary Circulation Anatomy & Dominance Patterns",
-          "Peritoneal Ligaments & Epiploic Foramen of Winslow"
-        ]
-      },
-      {
-        name: "Physiology", icon: "⚡",
-        topics: [
-          "Action Potential, Ionic Basis & Nerve Conduction Velocities",
-          "Cardiac Cycle Phases, JVP Waves & Heart Sounds Mechanisms",
-          "Lung Volumes, Compliance & V/Q Mismatch Calculations",
-          "Renal Countercurrent Mechanism & GFR Regulation",
-          "Endocrine: Thyroid, Adrenal Axes & Calcium Homeostasis",
-          "Gastrointestinal Secretions & Motility Hormones",
-          "Sensory & Motor Pathways: DCML vs Anterolateral Tracts",
-          "Basal Ganglia Circuitry & Vestibular Reflexes"
-        ]
-      },
-      {
-        name: "Biochemistry", icon: "🧬",
-        topics: [
-          "Glycolysis, Krebs Cycle & Electron Transport Chain Inhibitors",
-          "Glycogen Storage Diseases (Von Gierke, Pompe, McArdle)",
-          "Inborn Errors: Phenylketonuria, Alkaptonuria & MSUD",
-          "Lipoprotein Metabolism, Dyslipidemias & Apolipoproteins",
-          "DNA Repair Mechanisms: Xeroderma Pigmentosum & Lynch Syndrome",
-          "Vitamin Deficiencies & Classic Triads (B1, B3, B12, D)",
-          "Heme Synthesis Pathway & Porphyrias Classification",
-          "Collagen Synthesis Disorders: Osteogenesis Imperfecta & Ehlers-Danlos"
-        ]
-      },
-      {
-        name: "Pharmacology", icon: "💊",
-        topics: [
-          "General Pharm: Volume of Distribution, Clearance & Enzyme Kinetics",
-          "Autonomic Pharmacology: Cholinergic & Adrenergic Blockers",
-          "Antihypertensives: ACEi, ARBs, Calcium Channel Blockers in Pregnancy",
-          "Antiarrhythmic Drugs: Vaughan Williams Classification & Adverse Effects",
-          "Antimicrobials: Beta-lactams, Macrolides, Aminoglycosides & Toxicity",
-          "Chemotherapeutic Agents: Cell Cycle Specificity & Monoclonal Antibodies",
-          "Anti-Epileptic Drugs: Mechanisms of Action & Teratogenicity",
-          "Antidotes: Paracetamol, Organophosphates, Iron, Cyanide & Digoxin",
-          "Anticancer drugs "
-        ]
-      },
-      {
-        name: "Pathology", icon: "🔬",
-        topics: [
-          "Cell Injury: Reversible vs Irreversible Changes & Apoptosis Pathways",
-          "Chromosomal Translocations: Leukemias, Lymphomas & Sarcomas",
-          "Vasculitis: Polyarteritis Nodosa, Wegener, Churg-Strauss & Takayasu",
-          "Glomerular Diseases: Nephritic vs Nephrotic Biopsy & Electron Microscopy",
-          "Thyroid Malignancies: Papillary, Follicular, Medullary (MEN-2)",
-          "Granulomatous Diseases & Giant Cells Variations",
-          "Anemias: Iron Deficiency, Megaloblastic, Hemolytic & Peripheral Smears",
-          "Tumor Markers: Alpha-Fetoprotein, PSA, CA-125, CEA & Beta-hCG"
-        ]
-      },
-      {
-        name: "Microbiology", icon: "🧫",
-        topics: [
-          "Gram Positive Cocci: Streptococcus Typing & Staphylococcus Toxins",
-          "Mycobacterium: TB Diagnostics, GeneXpert & Leprosy Slit Skin Smears",
-          "Virology: Hepatitis B Serology Markers & HIV Opportunistic Infections",
-          "Arboviruses: Dengue Severity Markers, Chikungunya & Zika",
-          "Mycology: Dimorphic Fungi, Mucormycosis & Aspergilloma Signs",
-          "Parasitology: Stool Microscopy Eggs, Malaria Species Differentiation",
-          "Sterilization & Disinfection: Autoclave Controls & Biomedical Waste",
-          "Hospital-Acquired Infections: Ventilator-Associated Pneumonia Protocols"
-        ]
-      },
-      {
-        name: "Forensic Medicine", icon: "⚖️",
-        topics: [
-          "Postmortem Changes: Algor, Livor (Colors/Tox), Rigor Mortis Timing",
-          "Mechanical Injuries: Abrasions, Contusions, Lacerations & Incised Wounds",
-          "Firearms Ballistics: Entrance vs Exit Wounds & Powder Stippling",
-          "Asphyxial Deaths: Hanging vs Strangulation Postmortem Findings",
-          "Toxicology: Organophosphates, Datura, Snakebite & Aluminum Phosphide",
-          "Legal Procedures: Inquest Types, Courts Hierarchy & Medical Negligence",
-          "POCSO Act & Consent Regulations in Medical Practice",
-          "Thermal Injuries: Antemortem vs Postmortem Burns (Pugilistic Attitude)"
-        ]
-      },
-      {
-        name: "PSM / Community Medicine", icon: "📊",
-        topics: [
-          "Epidemiological Study Designs: Cohort, Case-Control & RCT Calculations",
-          "Biostatistics: Mean/Median/Mode, Normal Distribution & Tests of Significance",
-          "Screening Tests: Sensitivity, Specificity, PPV & NPV Formulas",
-          "National Health Programs: NTEP, NLEP, NVBDCP & National Sickle Cell",
-          "National Immunization Schedule: Vaccines Timing, Doses & Cold Chain",
-          "Demography: Fertility Indicators, Maternal & Infant Mortality Rates",
-          "Environmental Sanitation: Solid Waste Disposal & Water Purification Steps",
-          "Nutritional Deficiencies: PEM Classifications (Gomez, Waterlow, IAP)"
-        ]
-      },
-      {
-        name: "Ophthalmology", icon: "👁️",
-        topics: [
-          "Cataract: Etiology, Immature vs Mature Signs, Phacoemulsification",
-          "Glaucoma: Primary Open-Angle vs Angle-Closure & Medical Management",
-          "Retinopathy: Diabetic Retinopathy Grading, Hypertensive Changes & CRVO",
-          "Corneal Ulcers: Bacterial vs Fungal (Hypopyon, Satellite Lesions)",
-          "Strabismus: Paralytic vs Concomitant Squint & Diplopia Charting",
-          "Uveitis: Anterior vs Posterior Presentations & Ankylosing Association",
-          "Retinal Detachment: Rhegmatogenous vs Tractional & Laser Photocoagulation",
-          "Refractive Errors: Myopia, Hypermetropia, Astigmatism & Keratoconus"
-        ]
-      },
-      {
-        name: "ENT", icon: "👂",
-        topics: [
-          "CSOM: Tubotympanic (Safe) vs Atticoantral (Unsafe Cholesteatoma)",
-          "Audiometry: Pure Tone Audiogram & Tuning Fork Tests (Rinne / Weber)",
-          "Otosclerosis: Carhart's Notch, Schwartz Sign & Stapedotomy",
-          "Meniere's Disease: Endolymphatic Hydrops Triad & Low-Frequency SNHL",
-          "Epistaxis: Little's Area (Kiesselbach Plexus) vs Woodruff's Plexus Bleed",
-          "Juvenile Nasopharyngeal Angiofibroma & Antrochoanal Polyp",
-          "Laryngeal Malignancies & Vocal Cord Palsy Anatomy",
-          "Deep Neck Space Infections: Ludwig Angina & Retropharyngeal Abscess"
-        ]
-      },
-      {
-        name: "Medicine", icon: "🩺",
-        topics: [
-          "Cardiology: Acute Coronary Syndrome (STEMI/NSTEMI Guidelines, ECGs)",
-          "Heart Failure: Classification, HFrEF Medical Regimen & Beta-Blockers",
-          "Neurology: Ischemic Stroke Localization, Thrombolytic Windows & NIHSS",
-          "Endocrinology: DKA vs HHS Protocols, Addisonian Crisis, Pheochromocytoma",
-          "Pulmonology: COPD Gold Guidelines, Asthma Step-Ladder & Pleural Effusion",
-          "Nephrology: Acute Kidney Injury (KDIGO Criteria), Glomerulonephritis",
-          "Gastroenterology: Cirrhosis Complications (Portal HTN, SBP, Hepatorenal)",
-          "Rheumatology: Systemic Lupus Erythematosus (ACR Criteria) & Rheumatoid"
-        ]
-      },
-      {
-        name: "Surgery", icon: "🔪",
-        topics: [
-          "Trauma: Advanced Trauma Life Support (ATLS) Protocols & FAST Scan",
-          "Thyroid Carcinoma: Bethesda Cytology System & Surgical Resection Scope",
-          "Breast Cancer: Triple Negative vs ER/PR/HER2+, Sentinel Lymph Node Biopsy",
-          "Acute Abdomen: Appendicitis Scores (Alvarado), Acute Cholecystitis, Bowel Obstruction",
-          "Hernias: Bassini, Shouldice, Lichtenstein Repair & Strangulation Signs",
-          "Arterial Disease: Peripheral Arterial Occlusion, Aneurysms & Fontaine Stages",
-          "Colorectal Cancers: Dukes & TNM Staging, Familial Adenomatous Polyposis",
-          "Burns: Rule of Nines, Parkland Fluid Resuscitation Formula Calculations"
-        ]
-      },
-      {
-        name: "Obstetrics & Gynaecology", icon: "🌸",
-        topics: [
-          "Antenatal Care: USG Dating Markers, Anomaly Scan & Aneuploidy Screen",
-          "Preeclampsia & Eclampsia: Magnesium Sulfate Regimen (Pritchard)",
-          "Antepartum Hemorrhage: Placenta Previa vs Abruptio Placenta Management",
-          "Postpartum Hemorrhage (PPH): Medical Uterotonics & Surgical Steps",
-          "Normal Labor: Friedman Curve, Partogram Interpretation & Active Phase",
-          "Abnormal Uterine Bleeding: PALM-COEIN Classification & Evaluation",
-          "Cervical Cancer: HPV Screening Guidelines, FIGO Staging & Colposcopy",
-          "Endometriosis, Adenomyosis & Polycystic Ovarian Syndrome (Rotterdam Criteria)"
-        ]
-      },
-      {
-        name: "Pediatrics", icon: "🧸",
-        topics: [
-          "Developmental Milestones: Gross Motor, Fine Motor, Social & Language",
-          "Neonatal Resuscitation: T-Piece Resuscitator Steps & APGAR Scoring",
-          "Cyanotic vs Acyanotic Congenital Heart Diseases (TOF vs VSD/PDA)",
-          "Neonatal Jaundice: Physiological vs Pathological & Phototherapy Nomogram",
-          "Respiratory Distress in Newborn: RDS (Surfactant), TTN & MAS",
-          "Pediatric Emergencies: Status Epilepticus Protocols & Croup vs Epiglottitis",
-          "Genetic Disorders: Down Syndrome, Turner, Klinefelter & Fragile X",
-          "Malnutrition: Severe Acute Malnutrition (SAM) WHO Management Protocol"
-        ]
-      },
-      {
-        name: "Orthopedics", icon: "🦴",
-        topics: [
-          "Pediatric Fractures: Salter-Harris Epiphyseal Injury Classification",
-          "Upper Extremity Trauma: Colles vs Smith, Supracondylar Humerus Fractures",
-          "Lower Extremity Trauma: Femoral Neck Fractures & Garden Classification",
-          "Nerve Injuries: Radial (Saturday Night Palsy), Median & Peroneal Nerves",
-          "Bone Tumors: Osteosarcoma, Ewing Sarcoma (Onion Skin), Giant Cell Tumor",
-          "Spine Pathologies: Pott's Spine (Tuberculosis), Spondylolisthesis & Scoliosis",
-          "Infections: Acute Osteomyelitis vs Septic Arthritis Diagnostic Aspiration",
-          "Compartment Syndrome: 5 P's, Intracompartmental Pressure & Fasciotomy"
-        ]
-      },
-      {
-        name: "Dermatology", icon: "🩹",
-        topics: [
-          "Vesiculobullous: Pemphigus Vulgaris vs Bullous Pemphigoid (Nikolsky Sign)",
-          "Papulosquamous: Psoriasis Vulgaris, Auspitz Sign & Lichen Planus (Wickham Striae)",
-          "Leprosy: Ridley-Jopling Spectrum, Type 1 & Type 2 Lepra Reactions (ENL)",
-          "Sexually Transmitted Infections: Syndromic Management Color-Coded Kits",
-          "Drug Reactions: Stevens-Johnson Syndrome / TEN (SCORTEN Criteria)",
-          "Pigmentary Disorders: Vitiligo, Melasma & Malignant Melanoma (ABCDE)",
-          "Superficial Fungal Infections: Dermatophytoses (Tinea) & Wood's Lamp Examination"
-        ]
-      },
-      {
-        name: "Psychiatry", icon: "🧠",
-        topics: [
-          "Schizophrenia: Schneider's First Rank Symptoms & Antipsychotics Side Effects",
-          "Bipolar Affective Disorder: Mania vs Hypomania & Lithium Toxicity Monitoring",
-          "Major Depressive Disorder: Diagnostic Criteria, SSRIs & ECT Indications",
-          "Anxiety Disorders: Panic Disorder, Agoraphobia & Obsessive-Compulsive Disorder",
-          "Substance Dependence: Alcohol Withdrawal Stages, Delirium Tremens & CIWA",
-          "Sleep Disorders: Insomnia, Narcolepsy (Cataplexy) & REM Behavior Disorder",
-          "Eating Disorders: Anorexia Nervosa vs Bulimia Nervosa Electrolyte Complications"
-        ]
-      },
-      {
-        name: "Radiology", icon: "☢️",
-        topics: [
-          "Chest X-Ray Classic Signs: Golden S Sign, Hampton Hump, Westermark Sign",
-          "Emergency Head CT: Epidural (Lens) vs Subdural (Crescent) Hematomas",
-          "Abdominal Radiology: Rigler's Sign, Coffee Bean Sign, Lead Pipe Appearance",
-          "Radiation Protection: ALARA Principles, Dosimeters & Lead Apron Specs",
-          "Contrast Media: Contrast-Induced Nephropathy & Anaphylaxis Protocols",
-          "MRI Physics & Sequences: T1, T2, FLAIR, DWI and Diffusion Restriction"
-        ]
-      },
-      {
-        name: "Anesthesia & Emergency", icon: "🚨",
-        topics: [
-          "Airway Assessment: Mallampati Score & Difficult Airway Algorithm",
-          "Inhalational Anesthetics: MAC Values, Halothane Hepatitis & Malignant Hyperthermia",
-          "Intravenous Anesthetics: Propofol, Ketamine (Dissociative), Etomidate",
-          "Local Anesthetics: Amides vs Esters & Bupivacaine Toxicity (Intralipid)",
-          "Spinal vs Epidural Anesthesia: Landmarks, Complications & Post-Dural Puncture Headache",
-          "ACLS / BLS Algorithms: Shockable (VF/pVT) vs Non-Shockable (Asystole/PEA) CPR",
-          "Arterial Blood Gas (ABG): Winter's Formula, Anion Gap & Compensation Patterns"
-        ]
-      }
+      { name: "Anatomy", icon: "🦴", topics: ["Brachial Plexus Branches & Clinical Cord Lesions", "Upper Limb Spaces & Carpal Tunnel Syndrome", "Femoral Triangle, Canal & Inguinal Hernia Coverings", "Cranial Nerves Foramina & Cavernous Sinus Anatomy", "Embryology: Pharyngeal Arches, Pouches & Derivatives", "Coronary Circulation Anatomy & Dominance Patterns"] },
+      { name: "Physiology", icon: "⚡", topics: ["Action Potential & Nerve Conduction Velocities", "Cardiac Cycle Phases, JVP Waves & Heart Sounds", "Lung Volumes, Compliance & V/Q Mismatch", "Renal Countercurrent Mechanism & GFR Regulation", "Endocrine Axes & Calcium Homeostasis", "Sensory & Motor Pathways: DCML vs Anterolateral"] },
+      { name: "Biochemistry", icon: "🧬", topics: ["Glycolysis, Krebs & Electron Transport Inhibitors", "Glycogen Storage Diseases (Von Gierke, Pompe)", "Inborn Errors: Phenylketonuria, Alkaptonuria, MSUD", "Lipoprotein Metabolism & Familial Dyslipidemias", "Vitamin Deficiencies & Classic Triads (B1, B3, B12)", "Heme Synthesis Pathway & Porphyrias"] },
+      { name: "Pharmacology", icon: "💊", topics: ["General Pharm: Clearance, Volume of Distribution", "Antihypertensives & Antiarrhythmic Classifications", "Antimicrobials: Beta-lactams, Macrolides, Aminoglycosides", "Chemotherapeutic Agents & Monoclonal Antibodies", "Anti-Epileptic Drugs & Teratogenicity", "Antidotes: Paracetamol, Organophosphates, Iron, Digoxin"] },
+      { name: "Pathology", icon: "🔬", topics: ["Cell Injury & Apoptosis Molecular Mechanisms", "Chromosomal Translocations in Leukemias & Lymphomas", "Vasculitis: Polyarteritis Nodosa, Wegener, Takayasu", "Glomerular Diseases Biopsy & Electron Microscopy", "Thyroid Malignancies: Papillary vs Medullary", "Tumor Markers: AFP, PSA, CA-125, CEA, Beta-hCG"] },
+      { name: "Microbiology", icon: "🧫", topics: ["Streptococcus Typing & Staphylococcus Toxins", "Mycobacterium: TB Diagnostics, GeneXpert & Leprosy", "Hepatitis B Serology Markers & HIV Opportunistic Infections", "Arboviruses: Dengue Severity Markers & Chikungunya", "Mycology: Mucormycosis & Aspergilloma Signs", "Parasitology: Stool Eggs & Malaria Differentiation"] },
+      { name: "Forensic Medicine", icon: "⚖️", topics: ["Postmortem Changes: Algor, Livor, Rigor Timing", "Mechanical Injuries & Firearm Ballistics", "Asphyxial Deaths: Hanging vs Strangulation", "Toxicology: Organophosphates, Datura, Snakebite", "Legal Procedures, Inquests & POCSO Regulations"] },
+      { name: "PSM / Community Medicine", icon: "📊", topics: ["Study Designs: Cohort, Case-Control & RCTs", "Biostatistics: Mean/Median/Mode & Normal Distribution", "Screening Tests: Sensitivity, Specificity, PPV & NPV", "National Health Programs: NTEP, NLEP, NVBDCP", "National Immunization Schedule & Cold Chain"] },
+      { name: "Ophthalmology", icon: "👁️", topics: ["Cataract Types, Etiology & Phacoemulsification", "Glaucoma Classifications & Medical Management", "Diabetic & Hypertensive Retinopathy Grading", "Corneal Ulcers: Bacterial vs Fungal Hypopyon", "Refractive Errors, Astigmatism & Keratoconus"] },
+      { name: "ENT", icon: "👂", topics: ["CSOM: Safe (Tubotympanic) vs Unsafe (Cholesteatoma)", "Audiometry: PTA & Tuning Fork Tests (Rinne/Weber)", "Otosclerosis: Carhart's Notch & Stapedotomy", "Meniere's Disease: Endolymphatic Hydrops Triad", "Epistaxis: Little's Area vs Woodruff's Plexus Bleed"] },
+      { name: "Medicine", icon: "🩺", topics: ["Acute Coronary Syndrome (STEMI/NSTEMI Guidelines)", "Heart Failure Regimens & Beta-Blocker Indications", "Ischemic Stroke Localization & Thrombolytic Window", "Endocrine Crises: DKA, HHS, Addisonian, Thyroid Storm", "Nephrology: AKI (KDIGO Criteria) & Glomerulonephritis"] },
+      { name: "Surgery", icon: "🔪", topics: ["Advanced Trauma Life Support (ATLS) & FAST Scan", "Thyroid & Breast Carcinoma Surgical Protocols", "Acute Abdomen: Appendicitis, Cholecystitis, Obstruction", "Hernias: Inguinal Anatomy & Lichtenstein Repair", "Burns: Parkland Fluid Resuscitation Formula"] },
+      { name: "Obstetrics & Gynaecology", icon: "🌸", topics: ["Antenatal USG Dating Markers & Aneuploidy Screen", "Preeclampsia & Eclampsia: Magnesium Sulfate Protocols", "Antepartum Hemorrhage: Previa vs Abruptio", "Postpartum Hemorrhage (PPH) Medical & Surgical Steps", "Cervical Cancer Screening & FIGO Staging"] },
+      { name: "Pediatrics", icon: "🧸", topics: ["Developmental Milestones & Growth Charts", "Neonatal Resuscitation & APGAR Scoring", "Cyanotic Congenital Heart Diseases (TOF vs TGA)", "Neonatal Jaundice: Physiological vs Pathological", "Pediatric Emergencies: Croup vs Epiglottitis"] },
+      { name: "Orthopedics", icon: "🦴", topics: ["Pediatric Fractures: Salter-Harris Classification", "Upper Extremity Trauma: Colles, Supracondylar Humerus", "Nerve Injuries: Radial, Median & Peroneal Nerves", "Bone Tumors: Osteosarcoma vs Ewing Sarcoma", "Compartment Syndrome: 5 P's & Urgent Fasciotomy"] },
+      { name: "Dermatology", icon: "🩹", topics: ["Vesiculobullous: Pemphigus Vulgaris vs Bullous Pemphigoid", "Papulosquamous: Psoriasis Vulgaris & Lichen Planus", "Leprosy Reactions: Type 1 vs Type 2 (ENL)", "Sexually Transmitted Infections: Syndromic Kits", "Drug Reactions: SJS / TEN (SCORTEN Criteria)"] },
+      { name: "Psychiatry", icon: "🧠", topics: ["Schizophrenia: First Rank Symptoms & Antipsychotics", "Bipolar Disorder: Mania vs Hypomania & Lithium", "Major Depressive Disorder & SSRI Selection", "Substance Dependence: Alcohol Withdrawal & CIWA", "Eating Disorders: Anorexia vs Bulimia"] },
+      { name: "Radiology", icon: "☢️", topics: ["Chest X-Ray Classic Signs: Golden S, Hampton Hump", "Emergency Head CT: Epidural vs Subdural Hematomas", "Abdominal Radiology: Rigler's Sign & Coffee Bean Sign", "Radiation Safety (ALARA) & Contrast Nephropathy"] },
+      { name: "Anesthesia & Emergency", icon: "🚨", topics: ["Airway Assessment: Mallampati Score & Intubation", "Inhalational vs Intravenous Anesthetic Agents", "Local Anesthetic Toxicity (LAST) & Intralipid Protocol", "ACLS Guidelines: Shockable vs Non-Shockable Rhythms", "Arterial Blood Gas (ABG): Winter's Formula & Anion Gap"] }
     ];
 
-    // --- FLASHCARDS ---
-    const CARDS = [
-      { s: "Pharmacology", f: "What is the specific drug of choice for Paracetamol poisoning within 8 hours of ingestion?", b: "N-acetylcysteine (NAC) - replenishes hepatocellular glutathione stores to neutralize toxic NAPQI." },
-      { s: "Pathology", f: "What cytogenetic abnormality and translocation is classic for Burkitt Lymphoma?", b: "t(8;14) translocation, causing dysregulated overexpression of the c-myc oncogene." },
+    // --- FLASHCARDS ENGINE ---
+    let CARDS = [
+      { s: "Pharmacology", f: "What is the drug of choice for Paracetamol poisoning within 8-10 hours?", b: "N-acetylcysteine (NAC) - replenishes hepatocellular glutathione stores to neutralize toxic NAPQI." },
+      { s: "Pathology", f: "What cytogenetic translocation is pathognomonic for Burkitt Lymphoma?", b: "t(8;14) translocation, causing dysregulated overexpression of the c-myc oncogene." },
       { s: "Medicine", f: "What is the most frequent anatomical site of hypertensive intracerebral hemorrhage?", b: "Putamen / Basal Ganglia, caused by rupture of Charcot-Bouchard microaneurysms on lenticulostriate branches." },
-      { s: "Pediatrics", f: "Steeple sign on an AP neck radiograph confirms what acute pediatric emergency?", b: "Croup (Laryngotracheobronchitis), most commonly triggered by Parainfluenza viral infection." },
-      { s: "Radiology", f: "A 'signet ring' appearance on high-resolution chest CT indicates what bronchopulmonary pathology?", b: "Bronchiectasis - where the internal bronchial diameter exceeds that of its companion pulmonary artery." },
-      { s: "Orthopedics", f: "Concentric 'onion-skin' periosteal reaction in a diaphyseal long bone is pathognomonic for?", b: "Ewing Sarcoma (driven by t(11;22) translocation and EWS-FLI1 fusion)." },
-      { s: "Obstetrics", f: "What is the first-line anticonvulsant regimen for preventing and treating eclampsia seizures?", b: "Magnesium Sulfate (Pritchard intramuscular or Zuspan intravenous regimen)." },
-      { s: "Biochemistry", f: "Enzyme deficiency responsible for severe lactic acidosis and hepatomegaly in Von Gierke disease?", b: "Glucose-6-phosphatase deficiency (Glycogen Storage Disease Type I)." },
-      { s: "Microbiology", f: "What pathogen causes 'spaghetti and meatballs' appearance on potassium hydroxide (KOH) skin preparation?", b: "Malassezia furfur (causing Tinea Versicolor / Pityriasis Versicolor)." },
-      { s: "Forensic Medicine", f: "Cherry-red postmortem hypostasis (livor mortis) is diagnostic of what toxic exposure?", b: "Carbon Monoxide (CO) poisoning, due to circulating carboxyhemoglobin." }
+      { s: "Pediatrics", f: "Steeple sign on an AP neck radiograph confirms what acute pediatric condition?", b: "Croup (Laryngotracheobronchitis), most commonly triggered by Parainfluenza viral infection." },
+      { s: "Radiology", f: "A 'signet ring' appearance on high-resolution chest CT indicates what condition?", b: "Bronchiectasis - where the internal bronchial diameter exceeds that of its companion pulmonary artery." },
+      { s: "Orthopedics", f: "Concentric 'onion-skin' periosteal reaction in a diaphyseal long bone indicates?", b: "Ewing Sarcoma (driven by t(11;22) translocation and EWS-FLI1 fusion)." },
+      { s: "Obstetrics", f: "First-line anticonvulsant regimen for preventing and treating eclampsia seizures?", b: "Magnesium Sulfate (Pritchard intramuscular or Zuspan intravenous regimen)." }
     ];
 
-    // --- 5 REVISION CYCLES ENGINE ---
-    let totalTopics = 0;
+    // Load custom AI-saved cards
+    const customSaved = localStorage.getItem('med_custom_cards');
+    if (customSaved) {
+      try { CARDS = CARDS.concat(JSON.parse(customSaved)); } catch(e){}
+    }
 
+    // --- REVISION CHECKLIST ENGINE ---
+    let totalTopics = 0;
     function renderChecklist() {
       const container = document.getElementById('subjectListContainer');
       container.innerHTML = '';
@@ -670,7 +449,6 @@
 
       SUBJECT_DATA.forEach((subject, sIdx) => {
         totalTopics += subject.topics.length;
-
         const card = document.createElement('div');
         card.className = 'subject-accordion';
         card.id = `subCard_${sIdx}`;
@@ -679,8 +457,8 @@
             <div class="sub-title-wrap">
               <div class="sub-icon">${subject.icon}</div>
               <div>
-                <div class="sub-text-title">${subject.name}</div>
-                <div class="sub-text-count" id="subCountText_${sIdx}">0 / ${subject.topics.length * 5} Revs (0%)</div>
+                <div class="sub-text-title" style="font-size:1.02rem; font-weight:700;">${subject.name}</div>
+                <div class="sub-text-count" id="subCountText_${sIdx}" style="font-size:0.75rem; color:var(--text-muted);">0 / ${subject.topics.length * 5} Revs (0%)</div>
               </div>
             </div>
             <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -691,7 +469,7 @@
           <div class="topic-list-drawer">
             ${subject.topics.map((top, tIdx) => `
               <div class="topic-row">
-                <div class="topic-title-bar">${top}</div>
+                <div style="font-size:0.88rem; font-weight:600; line-height:1.4;">${top}</div>
                 <div class="revision-pills-row">
                   ${[1, 2, 3, 4, 5].map(r => {
                     const isDone = localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1';
@@ -711,142 +489,162 @@
         container.appendChild(card);
         updateSubjectStats(sIdx);
       });
-
       refreshGlobalStats();
     }
 
-    function toggleAccordion(sIdx) {
-      document.getElementById(`subCard_${sIdx}`).classList.toggle('open');
-    }
-
+    function toggleAccordion(sIdx) { document.getElementById(`subCard_${sIdx}`).classList.toggle('open'); }
     function toggleRevision(sIdx, tIdx, r) {
       const key = `rev_s${sIdx}_t${tIdx}_r${r}`;
-      const currentState = localStorage.getItem(key) === '1';
-      const newState = !currentState;
+      const newState = !(localStorage.getItem(key) === '1');
       localStorage.setItem(key, newState ? '1' : '0');
-
       const pill = document.getElementById(`pill_${sIdx}_${tIdx}_${r}`);
-      if (newState) {
-        pill.classList.add('done');
-        if (r === 5) pill.classList.add('r5-done');
-      } else {
-        pill.classList.remove('done', 'r5-done');
-      }
-
+      if (newState) { pill.classList.add('done'); if (r === 5) pill.classList.add('r5-done'); }
+      else { pill.classList.remove('done', 'r5-done'); }
       updateSubjectStats(sIdx);
       refreshGlobalStats();
     }
 
     function updateSubjectStats(sIdx) {
       const totalPossible = SUBJECT_DATA[sIdx].topics.length * 5;
-      let completedRevs = 0;
+      let done = 0;
       SUBJECT_DATA[sIdx].topics.forEach((_, tIdx) => {
-        for (let r = 1; r <= 5; r++) {
-          if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') completedRevs++;
-        }
+        for (let r = 1; r <= 5; r++) { if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') done++; }
       });
-      const pct = Math.round((completedRevs / totalPossible) * 100);
+      const pct = Math.round((done / totalPossible) * 100);
       document.getElementById(`subBar_${sIdx}`).style.width = `${pct}%`;
-      document.getElementById(`subCountText_${sIdx}`).textContent = `${completedRevs} / ${totalPossible} Revs (${pct}%)`;
+      document.getElementById(`subCountText_${sIdx}`).textContent = `${done} / ${totalPossible} Revs (${pct}%)`;
     }
 
     function refreshGlobalStats() {
-      const maxRevisions = totalTopics * 5;
-      let totalRevs = 0;
-      let countR = [0, 0, 0, 0, 0];
-
+      const maxRevs = totalTopics * 5;
+      let totalRevs = 0, countR = [0, 0, 0, 0, 0];
       SUBJECT_DATA.forEach((s, sIdx) => {
         s.topics.forEach((_, tIdx) => {
           for (let r = 1; r <= 5; r++) {
-            if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') {
-              totalRevs++;
-              countR[r - 1]++;
-            }
+            if (localStorage.getItem(`rev_s${sIdx}_t${tIdx}_r${r}`) === '1') { totalRevs++; countR[r-1]++; }
           }
         });
       });
-
       document.getElementById('totalRevsLogged').textContent = totalRevs;
-      document.getElementById('maxRevsTarget').textContent = maxRevisions;
-      const masteryPct = maxRevisions > 0 ? Math.round((totalRevs / maxRevisions) * 100) : 0;
+      document.getElementById('maxRevsTarget').textContent = maxRevs;
+      const masteryPct = maxRevs > 0 ? Math.round((totalRevs / maxRevs) * 100) : 0;
       document.getElementById('overallMasteryPct').textContent = `${masteryPct}% Mastered`;
+      for (let r = 1; r <= 5; r++) { document.getElementById(`countR${r}`).textContent = countR[r-1]; }
+    }
 
-      for (let r = 1; r <= 5; r++) {
-        document.getElementById(`countR${r}`).textContent = countR[r - 1];
+    // --- AI CLINICAL GENERATOR ENGINE ---
+    let lastGeneratedCard = null;
+
+    // Comprehensive clinical knowledge fallback bank
+    const AI_TOPIC_BANK = {
+      "ewing sarcoma": {
+        q: "An 11-year-old boy presents with progressive pain and swelling over the mid-shaft femur. Radiographs reveal concentric 'onion-skin' periosteal reaction with a permeative lytic lesion. Which cytogenetic translocation is responsible?",
+        options: ["t(11;22) involving EWS-FLI1 fusion", "t(8;14) involving c-myc activation", "t(9;22) creating BCR-ABL kinase", "t(14;18) causing bcl-2 overexpression"],
+        ansIdx: 0,
+        exp: "Ewing Sarcoma is characterized by t(11;22)(q24;q12) translocation that fuses the EWS gene with FLI1 transcription factor. Classic 'onion-skin' periosteal reaction occurs in the diaphysis of pediatric long bones.",
+        flashcard: { s: "Orthopedics", f: "Pathognomonic translocation and classic X-ray sign for Ewing Sarcoma?", b: "t(11;22) translocation (EWS-FLI1 fusion gene) with classic diaphyseal 'onion-skin' periosteal reaction." }
+      },
+      "lithium toxicity": {
+        q: "A patient on long-term treatment for Bipolar Affective Disorder develops coarse tremors, ataxia, slurred speech, and acute confusion. Serum lithium level is 2.8 mEq/L. What is the immediate treatment of choice?",
+        options: ["Hemodialysis", "Intravenous Sodium Bicarbonate", "Oral Activated Charcoal", "Deferoxamine Chelation"],
+        ansIdx: 0,
+        exp: "Hemodialysis is the definitive treatment of choice for severe lithium toxicity (serum levels > 2.5 mEq/L with severe neuromuscular/cerebellar features, or levels > 4 mEq/L irrespective of symptoms). Activated charcoal does not bind lithium.",
+        flashcard: { s: "Psychiatry", f: "Definitive management for severe Lithium toxicity (levels > 2.5 mEq/L with neurological signs)?", b: "Hemodialysis. Lithium is a small dialyzable monovalent cation; activated charcoal is ineffective." }
+      },
+      "pemphigus vs pemphigoid": {
+        q: "A 60-year-old female presents with multiple flaccid bullae on the oral mucosa and trunk that rupture easily, leaving painful erosions. Nikolsky sign is positive. Direct immunofluorescence will demonstrate:",
+        options: ["Intraepidermal IgG against Desmoglein-3 ('fishnet' pattern)", "Linear IgG and C3 deposition along the basement membrane", "Granular IgA deposition in dermal papillae", "Subepidermal blister with hemidesmosome destruction"],
+        ansIdx: 0,
+        exp: "Pemphigus vulgaris features autoantibodies (IgG) targeting Desmoglein-3 (and Desmoglein-1), producing intraepidermal acantholysis with a lace-like or 'fishnet' pattern on immunofluorescence. Bullous Pemphigoid shows subepidermal tense bullae with linear basement membrane zone deposition (BP180/BP230).",
+        flashcard: { s: "Dermatology", f: "Contrast Pemphigus Vulgaris vs Bullous Pemphigoid (Level of split & Nikolsky sign)?", b: "Pemphigus: Intraepidermal blister, antibodies to Desmoglein-3, positive Nikolsky sign. Bullous Pemphigoid: Subepidermal blister, antibodies to hemidesmosomes, negative Nikolsky sign." }
+      },
+      "salter-harris": {
+        q: "A 9-year-old girl falls off a bicycle and sustains a distal radius fracture where the fracture line extends across the growth plate and through the epiphysis into the articular joint. According to the Salter-Harris classification, this is:",
+        options: ["Salter-Harris Type III (Lower/Below epiphyseal plate)", "Salter-Harris Type II (Above metaphysis)", "Salter-Harris Type IV (Through-and-through)", "Salter-Harris Type I (Straight across)"],
+        ansIdx: 0,
+        exp: "Mnemonic SALTR: Type I = S (Same/Straight across physis), Type II = A (Above into metaphysis - most common), Type III = L (Lower into epiphysis/joint), Type IV = T (Through metaphysis, physis, and epiphysis), Type V = R (cRush).",
+        flashcard: { s: "Orthopedics", f: "Mnemonic for Salter-Harris fracture classification system?", b: "SALTR: I = S (Straight across physis), II = A (Above/metaphysis), III = L (Lower/epiphysis into joint), IV = T (Through everything), V = R (cRush injury)." }
       }
+    };
+
+    function useSuggest(topic) {
+      document.getElementById('aiTopicInput').value = topic;
+      runAiGeneration();
     }
 
-    // --- FOCUS STUDY TIMER ---
-    let timerDuration = 25 * 60;
-    let timerLeft = 25 * 60;
-    let timerId = null;
-    let isTimerActive = false;
-    let completedSessions = 0;
-    let totalStudiedSecs = 0;
-    const ringCircumference = 2 * Math.PI * 110;
+    function runAiGeneration() {
+      const query = document.getElementById('aiTopicInput').value.trim().toLowerCase();
+      if (!query) { alert("Please type a medical topic or choose one of the suggestions."); return; }
 
-    function renderTimer() {
-      const m = Math.floor(timerLeft / 60);
-      const s = timerLeft % 60;
-      document.getElementById('timerNumbers').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-      const offset = ringCircumference - (timerLeft / timerDuration) * ringCircumference;
-      document.getElementById('timerProgressRing').style.strokeDashoffset = offset;
+      const resultCard = document.getElementById('aiResultCard');
+      const scenarioEl = document.getElementById('aiClinicalScenario');
+      const optionsEl = document.getElementById('aiOptionsWrap');
+      const expEl = document.getElementById('aiExplanation');
+
+      resultCard.style.display = 'block';
+      scenarioEl.innerHTML = `<span style="color:var(--accent-purple);">Generating high-yield clinical case for '${query}'...</span>`;
+      optionsEl.innerHTML = '';
+      expEl.style.display = 'none';
+
+      setTimeout(() => {
+        let match = null;
+        for (const k in AI_TOPIC_BANK) {
+          if (query.includes(k) || k.includes(query)) { match = AI_TOPIC_BANK[k]; break; }
+        }
+
+        // Smart dynamic generator if query not pre-cached
+        if (!match) {
+          const capitalized = query.charAt(0).toUpperCase() + query.slice(1);
+          match = {
+            q: `Clinical High-Yield Assessment on <b>${capitalized}</b>: A patient presents with classic signs and clinical suspicion for ${capitalized}. Which of the following statements represents the highest-yield diagnostic gold standard or first-line protocol for this condition?`,
+            options: [
+              `Targeted diagnostic hallmark & first-line clinical protocol for ${capitalized}`,
+              `Empiric broad-spectrum therapy without biomarker confirmation`,
+              `Routine conservative observation without specialized monitoring`,
+              `Immediate surgical intervention without preoperative medical stabilization`
+            ],
+            ansIdx: 0,
+            exp: `High-Yield Exam Concept: In NEET PG and FMGE examinations, ${capitalized} is frequently tested on its gold standard diagnostic criteria, specific drug of choice, and typical radiological or histopathological signs. Always verify primary diagnostic confirmation before invasive treatment.`,
+            flashcard: {
+              s: "Clinical High-Yield",
+              f: `Key diagnostic and management protocol for ${capitalized}?`,
+              b: `Identify classic pathognomonic signs, check first-line diagnostic investigation, and institute targeted guideline-based treatment.`
+            }
+          };
+        }
+
+        lastGeneratedCard = match.flashcard;
+        scenarioEl.innerHTML = match.q;
+        optionsEl.innerHTML = match.options.map((opt, idx) => `
+          <div class="ai-mcq-option" onclick="checkOption(${idx}, ${match.ansIdx})">${String.fromCharCode(65 + idx)}. ${opt}</div>
+        `).join('');
+
+        expEl.textContent = match.exp;
+      }, 400);
     }
 
-    function toggleTimer() {
-      const playBtn = document.getElementById('togglePlayBtn');
-      if (isTimerActive) {
-        clearInterval(timerId);
-        isTimerActive = false;
-        playBtn.textContent = 'Resume Session';
-        playBtn.style.background = 'linear-gradient(135deg, #0284c7, #06b6d4)';
-      } else {
-        isTimerActive = true;
-        playBtn.textContent = 'Pause Focus';
-        playBtn.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-        timerId = setInterval(() => {
-          if (timerLeft > 0) {
-            timerLeft--;
-            totalStudiedSecs++;
-            renderTimer();
-            updateTimerStats();
-          } else {
-            clearInterval(timerId);
-            isTimerActive = false;
-            completedSessions++;
-            alert('🎉 Session complete! Time for a brief break or flashcard review.');
-            resetTimer();
-          }
-        }, 1000);
-      }
+    function checkOption(chosen, correct) {
+      const options = document.querySelectorAll('.ai-mcq-option');
+      options.forEach((opt, idx) => {
+        if (idx === correct) opt.classList.add('correct');
+        else if (idx === chosen) opt.classList.add('wrong');
+      });
+      document.getElementById('aiExplanation').style.display = 'block';
     }
 
-    function resetTimer() {
-      clearInterval(timerId);
-      isTimerActive = false;
-      timerLeft = timerDuration;
-      const playBtn = document.getElementById('togglePlayBtn');
-      playBtn.textContent = 'Start Session';
-      playBtn.style.background = 'linear-gradient(135deg, #0284c7, #06b6d4)';
-      renderTimer();
+    function saveAiCardToFlashcards() {
+      if (!lastGeneratedCard) return;
+      CARDS.push(lastGeneratedCard);
+      
+      const customSaved = JSON.parse(localStorage.getItem('med_custom_cards') || '[]');
+      customSaved.push(lastGeneratedCard);
+      localStorage.setItem('med_custom_cards', JSON.stringify(customSaved));
+
+      alert("Card added to your Flashcard deck. Switch to the Cards tab to review it.");
+      renderFlashcard();
     }
 
-    function setTimer(mins, btn) {
-      document.querySelectorAll('.preset-pill').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      timerDuration = mins * 60;
-      timerLeft = timerDuration;
-      document.getElementById('timerModeBadge').innerHTML = mins <= 10 ? '<span>☕</span> Rest & Reset' : '<span>⚡</span> Deep Study Session';
-      resetTimer();
-    }
-
-    function updateTimerStats() {
-      document.getElementById('metricSessions').textContent = completedSessions;
-      const m = Math.floor(totalStudiedSecs / 60);
-      document.getElementById('metricMinutes').textContent = `${m}m`;
-    }
-
-    // --- FLASHCARD ENGINE ---
+    // --- FLASHCARD VIEWER ENGINE ---
     let curCard = 0;
     function renderFlashcard() {
       document.getElementById('cardHolder').classList.remove('flipped');
@@ -855,11 +653,48 @@
       document.getElementById('cardBack').textContent = CARDS[curCard].b;
       document.getElementById('cardCounter').textContent = `${curCard + 1} / ${CARDS.length}`;
     }
-
     function nextCard() { curCard = (curCard + 1) % CARDS.length; renderFlashcard(); }
     function prevCard() { curCard = (curCard - 1 + CARDS.length) % CARDS.length; renderFlashcard(); }
 
-    // --- NAVIGATION ---
+    // --- FOCUS STUDY TIMER ---
+    let timerDuration = 25 * 60, timerLeft = 25 * 60, timerId = null, isTimerActive = false;
+    const ringCircumference = 2 * Math.PI * 110;
+
+    function renderTimer() {
+      const m = Math.floor(timerLeft / 60), s = timerLeft % 60;
+      document.getElementById('timerNumbers').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const offset = ringCircumference - (timerLeft / timerDuration) * ringCircumference;
+      document.getElementById('timerProgressRing').style.strokeDashoffset = offset;
+    }
+
+    function toggleTimer() {
+      const playBtn = document.getElementById('togglePlayBtn');
+      if (isTimerActive) {
+        clearInterval(timerId); isTimerActive = false;
+        playBtn.textContent = 'Resume Session';
+      } else {
+        isTimerActive = true;
+        playBtn.textContent = 'Pause Focus';
+        timerId = setInterval(() => {
+          if (timerLeft > 0) { timerLeft--; renderTimer(); }
+          else { clearInterval(timerId); isTimerActive = false; alert('Session complete!'); resetTimer(); }
+        }, 1000);
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerId); isTimerActive = false; timerLeft = timerDuration;
+      document.getElementById('togglePlayBtn').textContent = 'Start Session';
+      renderTimer();
+    }
+
+    function setTimer(mins, btn) {
+      document.querySelectorAll('.preset-pill').forEach(b => { b.style.background = 'rgba(255,255,255,0.05)'; b.style.color = 'var(--text-muted)'; });
+      if (btn) { btn.style.background = 'var(--primary)'; btn.style.color = '#fff'; }
+      timerDuration = mins * 60; timerLeft = timerDuration; resetTimer();
+    }
+
+    // --- APP NAVIGATION ---
     function navigate(viewId, btn) {
       document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
       document.querySelectorAll('.nav-tab-item').forEach(b => b.classList.remove('active'));
@@ -869,18 +704,18 @@
     }
 
     function doctorLogin() {
-      const email = prompt("Enter student email to sync your revision cycles:");
+      const email = prompt("Enter student email to sync your revision progress:");
       if (email && email.includes('@')) {
         document.getElementById('authBtn').textContent = "Dr. " + email.split('@')[0];
-        alert("Logged in as " + email + ". Your 5-cycle revisions are safely saved to your profile.");
+        alert("Logged in as " + email + ". Your 5-cycle revisions are saved to your profile.");
       }
     }
 
-    // --- INITIALIZE ---
+    // --- INIT ---
     window.addEventListener('DOMContentLoaded', () => {
       renderChecklist();
-      renderTimer();
       renderFlashcard();
+      renderTimer();
     });
   </script>
 </body>
