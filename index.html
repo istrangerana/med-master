@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>MedMaster - Clinical AI Exam & Test Bank</title>
+  <title>MedMaster - Clinical AI Exam & Focus Suite</title>
   
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0369a1">
@@ -11,7 +11,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="apple-touch-icon" href="/icon-512.PNG">
 
-  <!-- PDF.js library for direct client-side PDF text extraction -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 
@@ -103,7 +102,7 @@
     .cycle-tag-badge { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); }
     .cycle-tag-count { font-size: 0.95rem; font-weight: 800; color: #fff; margin-top: 2px; }
 
-    /* Accordion Subjects */
+    /* Accordions */
     .subject-accordion {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 20px; margin-bottom: 14px; overflow: hidden;
@@ -140,7 +139,66 @@
     .rev-pill.done { background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff; border-color: transparent; }
     .rev-pill.r5-done { background: linear-gradient(135deg, #10b981, #059669); }
 
-    /* AI Exam Generator & Upload Suite */
+    /* Focus Study Timer Card with Integrated Online Radio/Music */
+    .timer-card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 28px; padding: 26px 20px; text-align: center;
+      backdrop-filter: blur(20px); box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    }
+    .timer-circle-wrap { position: relative; width: 220px; height: 220px; margin: 18px auto; }
+    .timer-circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+    .circle-base { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
+    .circle-indicator {
+      fill: none; stroke: url(#timerGrad); stroke-width: 9;
+      stroke-linecap: round; stroke-dasharray: 691; stroke-dashoffset: 0;
+      transition: stroke-dashoffset 0.4s ease;
+    }
+    .time-digits-display {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      font-size: 3.4rem; font-weight: 900; font-variant-numeric: tabular-nums;
+      color: #fff; letter-spacing: -1.5px;
+    }
+
+    /* Ambient Music Toolbar */
+    .music-controller-strip {
+      background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px; padding: 12px 14px; margin: 18px auto 0; max-width: 440px;
+      text-align: left;
+    }
+    .music-header-row {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+    }
+    .music-title {
+      font-size: 0.74rem; font-weight: 800; text-transform: uppercase; color: var(--accent-cyan);
+      display: flex; align-items: center; gap: 6px; letter-spacing: 0.5px;
+    }
+    .music-status-pill {
+      font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 6px;
+      background: rgba(255,255,255,0.05); color: var(--text-muted);
+    }
+    .music-status-pill.playing { background: rgba(16,185,129,0.18); color: #34d399; }
+
+    .music-channel-chips {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px;
+    }
+    .channel-chip {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--card-border);
+      border-radius: 10px; padding: 7px 4px; font-size: 0.72rem; font-weight: 700;
+      color: var(--text-muted); cursor: pointer; text-align: center; transition: 0.2s;
+    }
+    .channel-chip.active {
+      background: linear-gradient(135deg, #0284c7, #06b6d4); color: #fff;
+      border-color: transparent; box-shadow: 0 0 12px rgba(6,182,212,0.4);
+    }
+
+    .volume-slider-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .volume-slider-row input[type="range"] {
+      flex: 1; accent-color: var(--primary-light); height: 5px; cursor: pointer;
+    }
+
+    /* AI Generator & Test Arena Styles */
     .ai-hero-card {
       background: linear-gradient(135deg, rgba(168, 85, 247, 0.2) 0%, rgba(13, 20, 36, 0.9) 100%);
       border: 1px solid rgba(168, 85, 247, 0.38); border-radius: 24px; padding: 22px; margin-bottom: 20px;
@@ -154,38 +212,30 @@
       padding: 9px 6px; border-radius: 10px; border: none; background: transparent;
       color: var(--text-muted); font-size: 0.74rem; font-weight: 700; cursor: pointer; text-align: center;
     }
-    .mode-tab-btn.active { background: var(--accent-purple); color: #fff; box-shadow: 0 2px 10px rgba(168,85,247,0.4); }
+    .mode-tab-btn.active { background: var(--accent-purple); color: #fff; }
 
-    .ai-input-wrap { display: flex; gap: 8px; margin-top: 8px; }
     .ai-text-field {
-      flex: 1; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
+      width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--card-border);
       border-radius: 14px; padding: 12px 16px; color: #fff; font-size: 0.95rem; outline: none;
     }
-    .ai-text-field:focus { border-color: var(--accent-purple); }
 
-    /* Quantity & Config Bar */
     .config-strip {
       display: flex; justify-content: space-between; align-items: center; margin-top: 14px;
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
       padding: 10px 14px; border-radius: 12px; flex-wrap: wrap; gap: 8px;
     }
-    .q-count-picker { display: flex; align-items: center; gap: 6px; }
     .q-pill {
       padding: 5px 10px; border-radius: 8px; border: 1px solid var(--card-border);
       background: rgba(255,255,255,0.04); color: var(--text-muted); font-size: 0.75rem; font-weight: 700; cursor: pointer;
     }
     .q-pill.active { background: var(--primary); color: #fff; border-color: var(--primary-light); }
 
-    /* Upload Box for PDF / Image */
     .drop-upload-zone {
       margin-top: 12px; border: 2px dashed rgba(168, 85, 247, 0.4); border-radius: 16px;
-      padding: 20px; text-align: center; background: rgba(168, 85, 247, 0.05); cursor: pointer;
-      transition: all 0.2s;
+      padding: 20px; text-align: center; background: rgba(168, 85, 247, 0.05); cursor: pointer; display: block;
     }
-    .drop-upload-zone:hover { background: rgba(168, 85, 247, 0.1); border-color: var(--accent-purple); }
     .drop-upload-zone input { display: none; }
 
-    /* Mock Test Arena */
     .test-arena-card {
       background: var(--card-bg); border: 1px solid var(--card-border);
       border-radius: 24px; padding: 22px; margin-top: 18px; display: none;
@@ -195,8 +245,6 @@
       display: flex; justify-content: space-between; align-items: center;
       padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 16px;
     }
-    .test-meta-badge { font-size: 0.75rem; font-weight: 800; color: var(--primary-light); background: rgba(2,132,199,0.15); padding: 5px 12px; border-radius: 8px; }
-
     .q-number-pill-tray {
       display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 16px;
     }
@@ -211,9 +259,8 @@
     .mcq-choice-item {
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
       border-radius: 12px; padding: 13px 16px; margin-top: 10px; font-size: 0.9rem;
-      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; display: flex; align-items: center; gap: 10px;
     }
-    .mcq-choice-item:hover { background: rgba(255,255,255,0.06); }
     .mcq-choice-item.selected { border-color: var(--primary-light); background: rgba(2,132,199,0.18); font-weight: 600; }
     .mcq-choice-item.is-correct { border-color: var(--accent-emerald) !important; background: rgba(16,185,129,0.2) !important; color: #34d399; font-weight: 700; }
     .mcq-choice-item.is-wrong { border-color: var(--accent-rose) !important; background: rgba(244,63,94,0.2) !important; color: #fb7185; }
@@ -224,7 +271,26 @@
       display: flex; justify-content: space-around; align-items: center; text-align: center;
     }
 
-    /* Bottom Navigation */
+    /* Flashcard UI */
+    .flashcard-deck-wrap { perspective: 1200px; margin-bottom: 22px; cursor: pointer; }
+    .flashcard-inner-box {
+      min-height: 260px; background: var(--card-bg);
+      border: 1px solid var(--card-border); border-radius: 26px; padding: 28px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; position: relative; transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d; backdrop-filter: blur(20px);
+    }
+    .flashcard-deck-wrap.flipped .flashcard-inner-box { transform: rotateY(180deg); }
+    .card-face { backface-visibility: hidden; width: 100%; }
+    .card-face-back { position: absolute; transform: rotateY(180deg); color: var(--primary-light); }
+    .card-subject-tag {
+      position: absolute; top: 18px; left: 20px;
+      font-size: 0.72rem; text-transform: uppercase; font-weight: 700;
+      color: var(--accent-cyan); background: rgba(6,182,212,0.12);
+      padding: 4px 12px; border-radius: 10px; border: 1px solid rgba(6,182,212,0.3);
+    }
+
+    /* Navigation */
     .nav-bar-container {
       position: fixed; bottom: 0; left: 0; right: 0; height: 72px;
       background: rgba(5, 8, 17, 0.9); backdrop-filter: blur(24px);
@@ -264,7 +330,7 @@
       <div class="brand-icon">
         <svg viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
       </div>
-      <div class="brand-title">Med<span>Master</span> AI Exam</div>
+      <div class="brand-title">Med<span>Master</span> Focus</div>
     </div>
     <div id="authBtn" class="user-pill" onclick="doctorLogin()">Doctor Login</div>
   </header>
@@ -289,7 +355,7 @@
     <div id="subjectListContainer"></div>
   </main>
 
-  <!-- TAB 2: ADVANCED AI EXAM & PDF/IMAGE TEST GENERATOR -->
+  <!-- TAB 2: AI EXAM & PDF/IMAGE TEST GENERATOR -->
   <section id="view-ai" class="view-content">
     <div class="ai-hero-card">
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -298,21 +364,18 @@
       </div>
       <h2 style="font-size:1.25rem; font-weight:800; margin-top:8px;">Generate Custom Test & Q-Bank</h2>
 
-      <!-- 3 Generator Input Modes -->
       <div class="mode-switch-grid">
         <button class="mode-tab-btn active" id="tabModeTopic" onclick="switchGenMode('topic')">🔍 By Topic</button>
         <button class="mode-tab-btn" id="tabModePdf" onclick="switchGenMode('pdf')">📄 Upload PDF</button>
         <button class="mode-tab-btn" id="tabModeImg" onclick="switchGenMode('image')">🖼️ Upload Image</button>
       </div>
 
-      <!-- Mode 1: Search by Topic -->
       <div id="sectionTopicInput">
-        <div class="ai-input-wrap">
+        <div style="display:flex; gap:8px;">
           <input type="text" id="aiTopicInput" class="ai-text-field" placeholder="e.g. Acid-Base Disorders, Leprosy, Horner Syndrome...">
         </div>
       </div>
 
-      <!-- Mode 2 & 3: File Upload Box -->
       <div id="sectionFileUpload" style="display:none;">
         <label class="drop-upload-zone" for="sourceFileInput">
           <div style="font-size:1.8rem; margin-bottom:6px;">📎</div>
@@ -323,9 +386,8 @@
         <div id="fileExtractedPreview" style="font-size:0.78rem; color:#38bdf8; margin-top:8px; display:none;"></div>
       </div>
 
-      <!-- Question Quantity & Type Config -->
       <div class="config-strip">
-        <div class="q-count-picker">
+        <div style="display:flex; align-items:center; gap:6px;">
           <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">QUESTIONS:</span>
           <button class="q-pill" onclick="setQCount(1, this)">1</button>
           <button class="q-pill active" onclick="setQCount(3, this)">3</button>
@@ -341,13 +403,12 @@
     <div id="mockTestArena" class="test-arena-card">
       <div class="test-arena-header">
         <div>
-          <span class="test-meta-badge" id="testBatchTitle">Mock Test: 5 Questions</span>
+          <span style="font-size:0.75rem; font-weight:800; color:var(--primary-light); background:rgba(2,132,199,0.15); padding:5px 12px; border-radius:8px;" id="testBatchTitle">Mock Test: 5 Questions</span>
           <span style="font-size:0.74rem; color:var(--text-muted); margin-left:8px;" id="testTimerDisplay">⏱ 00:00</span>
         </div>
         <button onclick="finishTestAndScore()" id="btnFinishTest" style="background:linear-gradient(135deg, #10b981, #059669); border:none; color:#fff; font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:10px; cursor:pointer;">Finish & Score</button>
       </div>
 
-      <!-- Result Score Display (Shown on Finish) -->
       <div id="scoreSummaryBanner" class="score-summary-banner" style="display:none;">
         <div>
           <div style="font-size:1.6rem; font-weight:900; color:#fff;" id="scoreTotalMarks">0</div>
@@ -363,17 +424,14 @@
         </div>
       </div>
 
-      <!-- Question Jump Tray (Q1, Q2, Q3...) -->
       <div class="q-number-pill-tray" id="qNumTray"></div>
 
-      <!-- Active Question Stem & Options -->
       <div id="activeQuestionView">
         <div id="activeQStem" style="font-size:0.96rem; line-height:1.6; font-weight:600; margin-bottom:14px;">Loading question...</div>
         <div id="activeQOptions"></div>
         <div id="activeQExplanation" style="margin-top:14px; padding:14px; background:rgba(255,255,255,0.03); border:1px solid var(--card-border); border-radius:12px; font-size:0.86rem; line-height:1.5; color:#cbd5e1; display:none;"></div>
       </div>
 
-      <!-- Question Action Buttons -->
       <div style="display:flex; justify-content:space-between; margin-top:20px;">
         <button class="btn-sub-action" style="padding:10px 18px;" onclick="navigateQ(-1)">← Prev</button>
         <button onclick="saveCurrentBatchToFlashcards()" style="background:rgba(56,189,248,0.15); border:1px solid var(--primary-light); color:var(--primary-light); padding:10px 14px; border-radius:12px; font-size:0.78rem; font-weight:700; cursor:pointer;">+ Save All to Q-Bank</button>
@@ -382,7 +440,7 @@
     </div>
   </section>
 
-  <!-- TAB 3: FLASHCARDS & QUESTION BANK -->
+  <!-- TAB 3: FLASHCARDS -->
   <section id="view-cards" class="view-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
       <h2 style="font-size:1.15rem; font-weight:800;">Saved Cards & Q-Bank</h2>
@@ -408,9 +466,9 @@
     </div>
   </section>
 
-  <!-- TAB 4: FOCUS STUDY TIMER -->
+  <!-- TAB 4: FOCUS STUDY TIMER WITH INTEGRATED ONLINE MUSIC -->
   <section id="view-timer" class="view-content">
-    <div class="timer-card" style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:28px; padding:28px 20px; text-align:center; backdrop-filter:blur(20px);">
+    <div class="timer-card">
       <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(2,132,199,0.14); border:1px solid var(--card-border); color:var(--primary-light); font-size:0.78rem; font-weight:700; padding:6px 14px; border-radius:20px;">
         <span>⚡</span> Deep Focus Session
       </div>
@@ -421,17 +479,46 @@
         <button class="preset-pill" onclick="setTimer(90, this)" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--card-border); padding:8px 14px; border-radius:12px; font-size:0.8rem; cursor:pointer;">90m</button>
       </div>
 
-      <div style="position:relative; width:230px; height:230px; margin:20px auto;">
-        <svg style="transform:rotate(-90deg); width:100%; height:100%;" viewBox="0 0 240 240">
-          <circle style="fill:none; stroke:rgba(255,255,255,0.06); stroke-width:9;" cx="120" cy="120" r="110"/>
-          <circle id="timerProgressRing" style="fill:none; stroke:#38bdf8; stroke-width:9; stroke-linecap:round; stroke-dasharray:691; stroke-dashoffset:0; transition:stroke-dashoffset 0.4s ease;" cx="120" cy="120" r="110"/>
+      <div class="timer-circle-wrap">
+        <svg class="timer-circle-svg" viewBox="0 0 240 240">
+          <defs>
+            <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#0284c7"/>
+            </linearGradient>
+          </defs>
+          <circle class="circle-base" cx="120" cy="120" r="110"/>
+          <circle id="timerProgressRing" class="circle-indicator" cx="120" cy="120" r="110"/>
         </svg>
-        <div id="timerNumbers" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:3.4rem; font-weight:900; color:#fff;">25:00</div>
+        <div id="timerNumbers" class="time-digits-display">25:00</div>
       </div>
 
       <div style="display:flex; gap:10px; max-width:320px; margin:0 auto;">
         <button id="togglePlayBtn" class="btn-main-action" style="flex:2;" onclick="toggleTimer()">Start Session</button>
         <button class="btn-sub-action" style="flex:1;" onclick="resetTimer()">Reset</button>
+      </div>
+
+      <!-- Online Ambient Music / Radio Station Suite -->
+      <div class="music-controller-strip">
+        <div class="music-header-row">
+          <div class="music-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            Study Soundscape
+          </div>
+          <div class="music-status-pill" id="musicStatusPill">Muted</div>
+        </div>
+
+        <div class="music-channel-chips">
+          <div class="channel-chip active" id="chipMute" onclick="selectMusicChannel('none', this)">🔇 Off</div>
+          <div class="channel-chip" id="chipLofi" onclick="selectMusicChannel('lofi', this)">☕ Lo-Fi</div>
+          <div class="channel-chip" id="chipWaves" onclick="selectMusicChannel('alpha', this)">🧠 Alpha</div>
+          <div class="channel-chip" id="chipRain" onclick="selectMusicChannel('rain', this)">🌧️ Rain</div>
+        </div>
+
+        <div class="volume-slider-row">
+          <span style="font-size:0.72rem; color:var(--text-muted);">Vol:</span>
+          <input type="range" id="musicVolSlider" min="0" max="1" step="0.05" value="0.7" oninput="setMusicVolume(this.value)">
+        </div>
       </div>
     </div>
   </section>
@@ -457,7 +544,58 @@
   </nav>
 
   <script>
-    // --- 19 MBBS SUBJECTS WITH 5 REVISION CYCLES ---
+    // --- ONLINE AMBIENT MUSIC ENGINE ---
+    const onlineAudioPlayer = new Audio();
+    onlineAudioPlayer.loop = true;
+    onlineAudioPlayer.crossOrigin = "anonymous";
+    onlineAudioPlayer.preload = "none";
+
+    const STREAM_SOURCES = {
+      none: null,
+      // 24/7 Live Stream Streams & Direct Ambient CDNs
+      lofi: "https://streams.ilovemusic.de/iloveradio17.mp3", // Smooth Lo-Fi Chill Beats
+      alpha: "https://ia801503.us.archive.org/15/items/BinauralBeatsAlphaWavesStudyFocus/Alpha_Waves_10Hz_Focus.mp3", // Alpha Wave Concentration
+      rain: "https://ia800301.us.archive.org/15/items/Sound_Effects_Animal_Sounds_Rain_Forest_and_Ocean_Sound_Effects/Rain_and_Thunder.mp3" // Rain & White Noise
+    };
+
+    let activeMusicChannel = 'none';
+
+    function selectMusicChannel(channelKey, chipEl) {
+      document.querySelectorAll('.channel-chip').forEach(c => c.classList.remove('active'));
+      if (chipEl) chipEl.classList.add('active');
+      activeMusicChannel = channelKey;
+
+      if (channelKey === 'none') {
+        onlineAudioPlayer.pause();
+        onlineAudioPlayer.src = "";
+        updateMusicUI(false, "Muted");
+      } else {
+        onlineAudioPlayer.src = STREAM_SOURCES[channelKey];
+        onlineAudioPlayer.volume = parseFloat(document.getElementById('musicVolSlider').value);
+        if (isTimerActive) {
+          onlineAudioPlayer.play().then(() => {
+            updateMusicUI(true, "Playing " + channelKey.toUpperCase());
+          }).catch(err => {
+            console.warn("Audio autoplay blocked or network delay:", err);
+            updateMusicUI(false, "Click Play");
+          });
+        } else {
+          updateMusicUI(false, "Ready (" + channelKey.toUpperCase() + ")");
+        }
+      }
+    }
+
+    function setMusicVolume(val) {
+      onlineAudioPlayer.volume = parseFloat(val);
+    }
+
+    function updateMusicUI(isPlaying, statusText) {
+      const pill = document.getElementById('musicStatusPill');
+      pill.textContent = statusText;
+      pill.classList.toggle('playing', isPlaying);
+    }
+
+    // --- 19 MBBS SUBJECTS DATASET ---
     const SUBJECT_DATA = [
       { name: "Anatomy", icon: "🦴", topics: ["Brachial Plexus Branches & Clinical Cord Lesions", "Upper Limb Spaces & Carpal Tunnel Syndrome", "Femoral Triangle, Canal & Inguinal Hernia Coverings", "Cranial Nerves Foramina & Cavernous Sinus Anatomy", "Embryology: Pharyngeal Arches, Pouches & Derivatives", "Coronary Circulation Anatomy & Dominance Patterns"] },
       { name: "Physiology", icon: "⚡", topics: ["Action Potential & Nerve Conduction Velocities", "Cardiac Cycle Phases, JVP Waves & Heart Sounds", "Lung Volumes, Compliance & V/Q Mismatch", "Renal Countercurrent Mechanism & GFR Regulation", "Endocrine Axes & Calcium Homeostasis", "Sensory & Motor Pathways: DCML vs Anterolateral"] },
@@ -584,12 +722,11 @@
     }
 
     // --- AI EXAM & PDF/IMAGE TEST GENERATION ENGINE ---
-    let currentGenMode = 'topic'; // 'topic', 'pdf', 'image'
+    let currentGenMode = 'topic';
     let requestedQCount = 3;
     let extractedFileText = '';
     let extractedImageBase64 = null;
 
-    // Active Test State
     let currentBatchQuestions = [];
     let currentQIndex = 0;
     let userAnswers = {};
@@ -630,14 +767,13 @@
 
     function configureApiKey() {
       const current = localStorage.getItem('gemini_api_key') || '';
-      const key = prompt("Enter your free Google Gemini API Key:\n\n(Tip: Get a 100% free key from aistudio.google.com to enable infinite multi-question batches and direct PDF vision analysis).", current);
+      const key = prompt("Enter your Google Gemini API Key:\n\nLeave blank to use the internal medical knowledge bank.", current);
       if (key !== null) {
         localStorage.setItem('gemini_api_key', key.trim());
-        alert(key.trim() ? "Gemini API connected! High-yield multi-question exam generator active." : "Using internal medical knowledge bank.");
+        alert(key.trim() ? "Gemini API connected!" : "Using internal medical knowledge bank.");
       }
     }
 
-    // Handle Uploaded File (PDF text extraction & Image Base64 reading)
     async function handleSourceFileChosen(input) {
       const file = input.files[0];
       if (!file) return;
@@ -652,7 +788,7 @@
             const typedarray = new Uint8Array(this.result);
             const pdf = await pdfjsLib.getDocument(typedarray).promise;
             let fullText = '';
-            const maxPages = Math.min(pdf.numPages, 5); // Read up to 5 pages
+            const maxPages = Math.min(pdf.numPages, 5);
             for (let i = 1; i <= maxPages; i++) {
               const page = await pdf.getPage(i);
               const textContent = await page.getTextContent();
@@ -676,18 +812,17 @@
       }
     }
 
-    // Master Generator Function
     async function generateExamSuite() {
       let promptSubject = "";
       if (currentGenMode === 'topic') {
         promptSubject = document.getElementById('aiTopicInput').value.trim();
-        if (!promptSubject) { alert("Please type a topic name (e.g. Croup, Pheochromocytoma, Salter-Harris)."); return; }
+        if (!promptSubject) { alert("Please type a topic name."); return; }
       } else {
         if (!extractedFileText && !extractedImageBase64) {
           alert("Please upload a PDF or image file first.");
           return;
         }
-        promptSubject = "Uploaded Medical Document/Image (" + (currentGenMode === 'pdf' ? 'PDF Text' : 'Clinical Image') + ")";
+        promptSubject = "Uploaded Medical Document/Image";
       }
 
       const arena = document.getElementById('mockTestArena');
@@ -698,7 +833,6 @@
       document.getElementById('activeQExplanation').style.display = 'none';
       document.getElementById('scoreSummaryBanner').style.display = 'none';
 
-      // Check Gemini API
       const userKey = localStorage.getItem('gemini_api_key');
       if (userKey) {
         try {
@@ -709,16 +843,13 @@
         }
       }
 
-      // Built-in intelligent multi-question generator
       setTimeout(() => {
         buildLocalMultiQuestions(promptSubject, requestedQCount);
       }, 500);
     }
 
-    // Call Google Gemini API for custom number of questions
     async function callGeminiMultiQuestions(sourceContent, apiKey) {
       let payloadParts = [];
-
       const systemInstruction = `You are a Chief Medical Examiner designing a high-yield NEET PG / FMGE exam test.
 Generate EXACTLY ${requestedQCount} distinct clinical vignette multiple-choice questions (MCQs) with 4 options each (A, B, C, D), identifying the exact correct option index (0 to 3), and providing a detailed explanation with high-yield exam pearls.
 Return strictly a valid JSON array of objects with this schema:
@@ -733,12 +864,7 @@ Return strictly a valid JSON array of objects with this schema:
 
       if (currentGenMode === 'image' && extractedImageBase64) {
         payloadParts.push({ text: `${systemInstruction}\nAnalyze this uploaded medical image/notes page and generate ${requestedQCount} questions based on its concepts:` });
-        payloadParts.push({
-          inline_data: {
-            mime_type: "image/jpeg",
-            data: extractedImageBase64
-          }
-        });
+        payloadParts.push({ inline_data: { mime_type: "image/jpeg", data: extractedImageBase64 } });
       } else if (currentGenMode === 'pdf' && extractedFileText) {
         payloadParts.push({ text: `${systemInstruction}\nGenerate ${requestedQCount} questions strictly testing key high-yield facts in this excerpt:\n\n${extractedFileText.substring(0, 8000)}` });
       } else {
@@ -763,12 +889,10 @@ Return strictly a valid JSON array of objects with this schema:
       }
     }
 
-    // Built-in multi-question generator (Guarantees exact quantity requested)
     function buildLocalMultiQuestions(topic, count) {
       const generated = [];
       const cleanTopic = topic.charAt(0).toUpperCase() + topic.slice(1);
 
-      // Question angle templates
       const angles = [
         {
           stem: `A 35-year-old patient presents with classic clinical signs of <b>${cleanTopic}</b>. During initial evaluation, which of the following is considered the gold-standard diagnostic investigation?`,
@@ -840,7 +964,6 @@ Return strictly a valid JSON array of objects with this schema:
       launchTestArena(generated, cleanTopic);
     }
 
-    // Launch Test Arena with full Q1..Qn Navigation
     function launchTestArena(questions, title) {
       currentBatchQuestions = questions;
       currentQIndex = 0;
@@ -851,7 +974,6 @@ Return strictly a valid JSON array of objects with this schema:
       document.getElementById('btnFinishTest').style.display = 'block';
       document.getElementById('scoreSummaryBanner').style.display = 'none';
 
-      // Start Test Timer
       clearInterval(testTimerInterval);
       testTimerSecs = 0;
       testTimerInterval = setInterval(() => {
@@ -940,7 +1062,6 @@ Return strictly a valid JSON array of objects with this schema:
         }
       });
 
-      // NEET PG Scoring Scheme (+4 for correct, -1 for wrong)
       const totalMarks = (correct * 4) - (wrong * 1);
 
       document.getElementById('scoreTotalMarks').textContent = `${totalMarks} / ${currentBatchQuestions.length * 4}`;
@@ -954,7 +1075,7 @@ Return strictly a valid JSON array of objects with this schema:
 
     function saveCurrentBatchToFlashcards() {
       if (!currentBatchQuestions.length) return;
-      currentBatchQuestions.forEach((q, idx) => {
+      currentBatchQuestions.forEach((q) => {
         CARDS.push({
           s: "AI Test Bank",
           f: q.q,
@@ -974,7 +1095,7 @@ Return strictly a valid JSON array of objects with this schema:
       renderFlashcard();
     }
 
-    // --- FLASHCARD & TIMER ENGINES ---
+    // --- FLASHCARD ENGINE ---
     let curCard = 0;
     function renderFlashcard() {
       document.getElementById('cardHolder').classList.remove('flipped');
@@ -986,6 +1107,7 @@ Return strictly a valid JSON array of objects with this schema:
     function nextCard() { curCard = (curCard + 1) % CARDS.length; renderFlashcard(); }
     function prevCard() { curCard = (curCard - 1 + CARDS.length) % CARDS.length; renderFlashcard(); }
 
+    // --- FOCUS STUDY TIMER ENGINE ---
     let timerDuration = 25 * 60, timerLeft = 25 * 60, timerId = null, isTimerActive = false;
     const ringCircumference = 2 * Math.PI * 110;
 
@@ -1001,12 +1123,30 @@ Return strictly a valid JSON array of objects with this schema:
       if (isTimerActive) {
         clearInterval(timerId); isTimerActive = false;
         playBtn.textContent = 'Resume Session';
+        if (activeMusicChannel !== 'none') {
+          onlineAudioPlayer.pause();
+          updateMusicUI(false, "Paused");
+        }
       } else {
         isTimerActive = true;
         playBtn.textContent = 'Pause Focus';
+        
+        if (activeMusicChannel !== 'none' && STREAM_SOURCES[activeMusicChannel]) {
+          onlineAudioPlayer.play().then(() => {
+            updateMusicUI(true, "Playing " + activeMusicChannel.toUpperCase());
+          }).catch(err => {
+            console.warn("Autoplay paused:", err);
+          });
+        }
+
         timerId = setInterval(() => {
           if (timerLeft > 0) { timerLeft--; renderTimer(); }
-          else { clearInterval(timerId); isTimerActive = false; alert('Session complete!'); resetTimer(); }
+          else { 
+            clearInterval(timerId); isTimerActive = false; 
+            if (activeMusicChannel !== 'none') onlineAudioPlayer.pause();
+            alert('🎉 Session complete! Time for a brief break.'); 
+            resetTimer(); 
+          }
         }, 1000);
       }
     }
@@ -1014,6 +1154,10 @@ Return strictly a valid JSON array of objects with this schema:
     function resetTimer() {
       clearInterval(timerId); isTimerActive = false; timerLeft = timerDuration;
       document.getElementById('togglePlayBtn').textContent = 'Start Session';
+      if (activeMusicChannel !== 'none') {
+        onlineAudioPlayer.pause();
+        updateMusicUI(false, "Ready (" + activeMusicChannel.toUpperCase() + ")");
+      }
       renderTimer();
     }
 
@@ -1040,7 +1184,7 @@ Return strictly a valid JSON array of objects with this schema:
       }
     }
 
-    // --- INITIALIZATION ---
+    // --- INIT ---
     window.addEventListener('DOMContentLoaded', () => {
       renderChecklist();
       renderFlashcard();
